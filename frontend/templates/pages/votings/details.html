@@ -1,0 +1,64 @@
+{% extends 'base/voting_page.html' %}
+
+{% block links %}
+    {% if voting.is_ready_for_votefacts_creating %}
+        <a class="btn btn-info mb-1" href="{% url 'voting_vote' voting.id %}" role="button">Проголосовать</a>
+    {% endif %}
+    {% if request.user == voting.author %}
+        <a class="btn btn-info mb-1" href="{% url 'voting_edit' voting.id %}" role="button">Редактировать</a>
+    {% endif %}
+    {% if request.user.is_authenticated %}
+        <a class="btn btn-danger mb-1" href="{% url 'complaint_add' voting.id %}" role="button">Подать жалобу</a>
+    {% endif %}
+{% endblock %}
+{% block controls %}
+    <div class="row">
+        <div class="col">
+            {% if users %}
+                {% if users == 1 %}
+                    <p>{{ users }} пользователь проголосовал</p>
+                {% elif users == 2 %}
+                    <p>{{ users }} пользователя проголосовали</p>
+                {% else %}
+                    <p>{{ users }} пользователей проголосовали</p>
+                {% endif %}
+                {% for variant in variants %}
+                <div class="progress my-3 w-100" style="height: 30px;">
+                <div class="progress-bar text-body overflow-visible" style="width: {{ variant.1 }}%">{{ variant.0 }}: {{ variant.1 }}%</div>
+                </div>
+                {% endfor %}
+            {% else %}
+                <div class="alert alert-danger" role="alert">Никто еще не проголосовал</div>
+            {% endif %}
+        </div>
+    </div>
+    <div class="row">
+        <h3>Комментарии</h3>
+        <hr/>
+        {% if comments %}
+            <div class="text-start">
+                {% for c in comments %}
+                    <h4>{{ c.author }} ({{ c.created_at }})</h4>
+                    <p>{{ c.description }}</p>
+                    {% if c.author == request.user %}
+                        <form method="POST">
+                            {% csrf_token %}
+                            <input type="submit" name="delete-{{ c.id }}" class="btn btn-danger" value="Удалить комментарий"/>
+                        </form>
+                    {% endif %}
+                    <hr/>
+                {% endfor %}
+            </div>
+        {% else %}
+            <div class="alert alert-danger" role="alert">Никто еще не комментировал</div>
+        {% endif %}
+        {% if request.user.is_authenticated %}
+                <form method="POST">
+                    {% csrf_token %}
+                    <label for="comment">Написать комментарий...</label></br>
+                    <input type="text" id="comment" class="form-control" name="comment"/>
+                    <input type="submit" class="btn btn-primary mt-3" value="Отправить"/>
+                </form>
+        {% endif %}
+    </div>
+{% endblock %}

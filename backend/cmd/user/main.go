@@ -128,6 +128,31 @@ func getUser(c echo.Context) error {
 	return c.JSON(http.StatusOK, user)
 }
 
+// Обновление информации о пользователе
+func updateUser(c echo.Context) error {
+	username := c.Param("username")
+	var userUpdates User
+	if err := c.Bind(&userUpdates); err != nil {
+		return c.JSON(http.StatusBadRequest, err)
+	}
+
+	var user User
+	if err := db.Where("username = ?", username).First(&user).Error; err != nil {
+		return c.JSON(http.StatusNotFound, "Пользователь не найден")
+	}
+
+	// Обновление полей пользователя
+	user.Email = userUpdates.Email
+	user.Gender = userUpdates.Gender
+	user.DateOfBirth = userUpdates.DateOfBirth
+	user.Country = userUpdates.Country
+
+	if err := db.Save(&user).Error; err != nil {
+		return c.JSON(http.StatusInternalServerError, "Ошибка при обновлении пользователя")
+	}
+	return c.JSON(http.StatusOK, "Информация о пользователе обновлена")
+}
+
 func main() {
 	initDB() // Инициализация базы данных
 
@@ -135,6 +160,7 @@ func main() {
 	e.POST("/users/register", registerUser)
 	e.POST("/users/login", loginUser)
 	e.GET("/users/:username", getUser)
+	e.PUT("/users/:username", updateUser) // Добавляем маршрут для обновления пользователя
 
 	e.Logger.Fatal(e.Start(":8080")) // Запуск сервера
 }

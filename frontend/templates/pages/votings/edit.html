@@ -1,0 +1,80 @@
+{% extends 'base/base.html' %}
+
+{% block content %}
+    <div class="container">
+        <form method="POST" enctype="multipart/form-data" id="main-form">
+            {% csrf_token %}
+            <div class="row">
+                <div class="col-md-3">
+                    {% if voting.image != 'default.png' %}
+                        <img src="{{ voting.image.url }}" class="img-fluid rounded float-start">
+                    {% endif %}
+                </div>
+                <div class="col-md-6">
+                    <div class="container text-center mt-5">
+                        <div class="row">
+                            <div class="col">
+                              <label for="voting-name">Имя голосования:</label>
+                              <input type="text" class="form-control mb-3" value="{{ voting.name }}" name="voting-name" id="voting-name"/>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col">
+                              <label for="voting-description">Описание голосования:</label>
+                              <textarea class="form-control mb-3" id="voting-description" name="voting-description">{{ voting.description }}</textarea>
+                            </div>
+                        </div>
+                        <div class="row">
+                        	<div class="col">
+                                Тип голосования: {{ voting.get_voting_type_display }}
+                        	</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="mt-3 mb-3">
+                <label for="image" class="form-label">Изображение голосования</label>
+                <input class="form-control" type="file" name="image" id="image">
+            </div>
+            {% if not voting.is_ready_for_votefacts_creating %}
+                <div id="alert-danger" class="alert alert-danger">
+                    Для этого типа голосования надо как минимум {% if voting.voting_type != 0 %}3{% else %}2{% endif %} варианта.<br/>
+                    Если Вы решили доделать голосование по-позже, вы всегда можете увидеть это голосование на странице <a href="{% url 'voting_history' %}">Мои взаимодействия с голосованиями</a>. Другие пользователи не увидят это голосование, пока оно будет недоделанным.
+                </div>
+            {% endif %}
+            {% for variant in voting.votevariant_set.all %}
+                <div class="mb-3">
+                    <label for="variant-{{ variant.id }}">
+                        Новое имя варианта "{{ variant.description }}":
+                        {% if voting.voting_type != 0 %}
+                            {% if variant.votefact_set.count == 0 %}
+                                <button class="btn btn-danger variant-delete-button" onclick="event.preventDefault(); toggleDeleteStatus(event.target)">Удалить</button>
+                                <input type="checkbox" name="variant-delete-{{variant.id}}" id="variant-delete-{{ variant.id }}" value="delete-{{ variant.id }}" hidden="true"/>
+                            {% else %}
+                                <span class="form-text mb-3 text-danger">
+                                    (Нельзя удалить этот вариант, ведь кто-то уже проголосовал за него.)
+                                </span>
+                            {% endif %}
+                        {% endif %}
+                    </label>
+                    <input class="form-control" type="text" name="variant-{{ variant.id }}" value="{{ variant.description }}" id="variant-{{ variant.id }}" required="true"/>
+                </div>
+            {% endfor %}
+            <button class="btn btn-primary mb-3" id="add-variant-btn" onclick="event.preventDefault(); addInput(event.target, 'variant-new-'+variantcount, 'text', 'Новый вариант:')">Добавить новый вариант</button>
+            <div class="row">
+                <div class="col">
+                    <input class="btn btn-primary" id="submit-btn" type="submit" value="Сохранить" {% if not voting.is_ready_for_votefacts_creating %}disabled{% endif %}/>
+                </div>
+            </div>
+        </form>
+
+    </div>
+{% endblock content %}
+{% block extra_js %}
+{% load static %}
+    <script>
+        window.variantcount = {{ voting.votevariant_set.count }};
+        window.voting_type = {{ voting.voting_type }};
+    </script>
+    <script src="{% static 'voting.edit.js' %}"></script>
+{% endblock extra_js %}

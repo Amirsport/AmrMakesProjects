@@ -1,0 +1,31 @@
+{% extends 'base/base.html' %}
+
+{% block content %}
+    <h1 class="text-center">{{ pagename }}</h1>
+    <hr>
+    <div class="alert alert-success" role="alert">Здесь вы можете оставить жалобу на голосование <a href="{% url 'voting_details' voting.id %}">{{ voting.name }}</a></div>
+    <form method="POST">
+        {% csrf_token %}
+        <div class="col">
+            {% for field in form %}
+                {% if field.widget_type != 'hidden' %}
+                    <div class="form-floating mb-3">
+                        {{ field }}
+                        <label class="form-label" for="{{ field.name }}">{{ field.label }}</label>
+                    </div>
+                {% else %}
+                    {{ field }}
+                {% endif %}
+            {% endfor %}
+            <input class="btn btn-primary" type="submit" value="Отправить">
+        </div>
+    </form>
+    {% if form.errors %}
+        <br/>
+        {% for field, errs in form.errors.items %}
+          {% for err in errs %}
+            <div class="alert alert-danger" role="alert"><b>{{field}}</b>: {{ err }}</div>
+          {% endfor %}
+        {% endfor %}
+    {% endif %}
+{% endblock %}

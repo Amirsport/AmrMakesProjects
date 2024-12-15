@@ -1,0 +1,30 @@
+{% extends 'base/base.html' %}
+
+{% block content %}
+    <div class="card h-100 border-success text-center">
+        <div class="card-header"><h1>Авторизация</h1></div>
+        <div class="card-body">
+            <form action="{% url 'login' %}" method="POST">
+                {% csrf_token %}
+                <div class="col">
+                    {% for field in form %}
+                        <div class="form-floating mb-3">
+                            <input type="{{ field.widget_type }}" name="{{ field.name }}" id="{{ field.name }}" class="form-control">
+                            <label class="form-label" for="{{ field.name }}">{{ field.label }}:</label><br/>
+                        </div>
+                    {% endfor %}
+                    <input class="btn btn-primary" type="submit" value="Войти">
+                </div>
+            </form>
+        </div>
+    </div>
+    {% if form.errors %}
+        <br/>
+        {% for field, errs in form.errors.items %}
+          {% for err in errs %}
+            <div class="alert alert-danger" role="alert"><b>{{field}}</b>: {{ err }}</div>
+          {% endfor %}
+        {% endfor %}
+    {% endif %}
+
+{% endblock %}

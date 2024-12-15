@@ -32,3 +32,11 @@ POST http://localhost:8080/users/login
 Получаем jwt ключ
 
 GET http://localhost:8080/users/levan
+
+PUT http://localhost:8080/users/levan
+{
+    "email": "zaush@example.com",
+    "gender": 1,
+    "date_of_birth": "1990-01-01",
+    "country": "Russia"
+}

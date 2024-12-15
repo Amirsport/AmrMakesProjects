@@ -1,0 +1,6 @@
+CREATE TABLE votefact (
+    id SERIAL PRIMARY KEY,
+    author_id INT REFERENCES users(id) ON DELETE CASCADE,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    variant_id INT REFERENCES votevariant(id) ON DELETE CASCADE
+);

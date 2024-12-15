@@ -1,0 +1,34 @@
+{% extends 'base/base.html' %}
+
+{% block content %}
+    <h1 class="text-center">{{ pagename }}</h1>
+    <hr>
+    <form method="POST">
+        {% csrf_token %}
+        {% for field in form %}
+            {% if field.widget_type != 'password' %}
+                <div class="form-floating mb-3">
+                    {{ field }}
+                    <label class="form-label" for="{{ field.name }}">{{ field.label }}</label>
+                </div>
+            {% else %}
+                <div class="form-floating mb-3">
+                    <input type="password" name="{{ field.name }}" id="{{ field.name }}" class="form-control">
+                    <label class="form-label" for="{{ field.name }}">{{ field.label }}</label>
+                </div>
+            {% endif %}
+        {% endfor %}
+        <div class="form-text mb-3">
+            Пароль должен быть от 8 символов и содержать буквы и цифры.
+        </div>
+        <input type="submit" value="Зарегистрироваться" class="btn btn-primary mb-3">
+    </form>
+    {% if errors %}
+        <br/>
+        {% for field, errs in errors.items %}
+            {% for err in errs %}
+                <div class="alert alert-danger" role="alert"><b>{{field}}</b>: {{ err }}</div>
+            {% endfor %}
+        {% endfor %}
+    {% endif %}
+{% endblock %}
