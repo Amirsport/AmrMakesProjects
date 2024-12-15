@@ -8,6 +8,7 @@ import (
 	"path/filepath"
 	"strconv"
 
+	"github.com/dgrijalva/jwt-go"
 	"github.com/labstack/echo/v4"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
@@ -20,6 +21,11 @@ type Voting struct {
 	AuthorID    int    `json:"author_id"`   // Поле для ID автора
 	VotingType  int    `json:"voting_type"` // Изменено на int для соответствия INTEGER
 	Image       string `json:"image"`       // Хранит путь к изображению
+}
+
+type JWTClaims struct {
+	Username string `json:"username"`
+	jwt.StandardClaims
 }
 
 var db *gorm.DB
@@ -35,6 +41,31 @@ func initDB() {
 	db.AutoMigrate(&Voting{}) // Автоматическая миграция модели Voting
 }
 
+// JWT Middleware
+func JWTMiddleware(next echo.HandlerFunc) echo.HandlerFunc {
+	return func(c echo.Context) error {
+		token := c.Request().Header.Get("Authorization")
+		if token == "" {
+			return c.JSON(http.StatusUnauthorized, "Отсутствует токен")
+		}
+
+		// Удаляем "Bearer " из токена
+		token = token[len("Bearer "):]
+
+		claims := &JWTClaims{}
+		_, err := jwt.ParseWithClaims(token, claims, func(token *jwt.Token) (interface{}, error) {
+			return []byte("your_secret_key"), nil // Замените на ваш секретный ключ
+		})
+
+		if err != nil {
+			return c.JSON(http.StatusUnauthorized, "Неверный токен")
+		}
+
+		// Если токен действителен, можно продолжить
+		return next(c)
+	}
+}
+
 // Функция для создания голосования
 func createVoting(c echo.Context) error {
 	name := c.FormValue("name")
@@ -48,8 +79,8 @@ func createVoting(c echo.Context) error {
 		return c.JSON(http.StatusBadRequest, "Ошибка: неверный author_id")
 	}
 
-	votingTypeInt, err := strconv.Atoi(votingType)
-	if err != nil {
+	votingTypeInt, _ := strconv.Atoi(votingType)
+	if votingTypeInt < 1 || votingTypeInt > 3 {
 		return c.JSON(http.StatusBadRequest, "Ошибка: неверный voting_type")
 	}
 
@@ -123,7 +154,7 @@ func main() {
 	initDB()
 	e := echo.New()
 
-	e.POST("/votings", createVoting)
+	e.POST("/votings", JWTMiddleware(createVoting)) // Применяем middleware
 	e.GET("/votings", getVotings)
 
 	e.Logger.Fatal(e.Start(":8081"))

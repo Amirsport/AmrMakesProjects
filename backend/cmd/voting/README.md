@@ -10,6 +10,8 @@ CREATE TABLE votings (
 1. Создание голосования
 Метод: POST
 URL: http://localhost:8081/votings
+Body->form-data(для всего Text, для image - file)
+Token required
 Тело запроса:
 {
     "name": "Название голосования",
@@ -23,9 +25,4 @@ URL: http://localhost:8081/votings
 Метод: GET
 URL: http://localhost:8081/votings
 
-3. Проверка JWT токена
-Метод: GET
-URL: http://localhost:8081/check-token
-
-Authorization: Bearer <ваш_jwt_токен>
 
