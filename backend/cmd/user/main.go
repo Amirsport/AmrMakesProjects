@@ -31,6 +31,7 @@ type User struct {
 // JWTClaims структура для хранения данных JWT
 type JWTClaims struct {
 	Username string `json:"username"`
+	ID       uint   `json:"id"` // Добавляем ID пользователя
 	jwt.StandardClaims
 }
 
@@ -103,6 +104,7 @@ func loginUser(c echo.Context) error {
 	// Создание JWT токена
 	claims := &JWTClaims{
 		Username: dbUser.Username,
+		ID:       dbUser.ID, // Добавляем ID пользователя
 		StandardClaims: jwt.StandardClaims{
 			ExpiresAt: time.Now().Add(time.Hour * 72).Unix(),
 		},

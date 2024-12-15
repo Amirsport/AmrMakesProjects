@@ -11,7 +11,7 @@ CREATE TABLE votings (
 Метод: POST
 URL: http://localhost:8081/votings
 Body->form-data(для всего Text, для image - file)
-Token required
+Headers: Authorization 'Bearer {jwt}'
 Тело запроса:
 {
     "name": "Название голосования",
