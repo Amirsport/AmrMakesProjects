@@ -3,14 +3,6 @@ localhost
 5432
 postgres
 
-CREATE TABLE complaint (
-    id SERIAL PRIMARY KEY,
-    description TEXT NOT NULL,
-    author_id INT REFERENCES users(id) ON DELETE CASCADE,
-    voting_id INT REFERENCES voting(id) ON DELETE CASCADE,
-    status VARCHAR(50)
-);
-
 CREATE TABLE session (
     session_key VARCHAR(255) PRIMARY KEY,
     session_data TEXT,
