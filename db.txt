@@ -1,0 +1,48 @@
+votings
+localhost
+5432
+postgres
+
+CREATE TABLE voting (
+    id SERIAL PRIMARY KEY,
+    name VARCHAR(255) NOT NULL,
+    description TEXT,
+    author_id INT REFERENCES users(id) ON DELETE CASCADE,
+    voting_type VARCHAR(50),
+    image VARCHAR(255)
+);
+
+CREATE TABLE votevariant (
+    id SERIAL PRIMARY KEY,
+    description TEXT NOT NULL,
+    voting_id INT REFERENCES voting(id) ON DELETE CASCADE
+);
+
+CREATE TABLE votefact (
+    id SERIAL PRIMARY KEY,
+    author_id INT REFERENCES users(id) ON DELETE CASCADE,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    variant_id INT REFERENCES votevariant(id) ON DELETE CASCADE
+);
+
+CREATE TABLE complaint (
+    id SERIAL PRIMARY KEY,
+    description TEXT NOT NULL,
+    author_id INT REFERENCES users(id) ON DELETE CASCADE,
+    voting_id INT REFERENCES voting(id) ON DELETE CASCADE,
+    status VARCHAR(50)
+);
+
+CREATE TABLE comment (
+    id SERIAL PRIMARY KEY,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    description TEXT NOT NULL,
+    author_id INT REFERENCES users(id) ON DELETE CASCADE,
+    voting_id INT REFERENCES voting(id) ON DELETE CASCADE
+);
+
+CREATE TABLE session (
+    session_key VARCHAR(255) PRIMARY KEY,
+    session_data TEXT,
+    expire_date TIMESTAMP
+);
