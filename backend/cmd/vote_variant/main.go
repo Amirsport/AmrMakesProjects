@@ -33,7 +33,6 @@ type JWTClaims struct {
 }
 
 var db *gorm.DB
-var voteVariants []VoteVariant
 
 // Инициализация базы данных
 func initDB() {
