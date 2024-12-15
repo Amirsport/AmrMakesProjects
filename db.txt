@@ -11,14 +11,6 @@ CREATE TABLE complaint (
     status VARCHAR(50)
 );
 
-CREATE TABLE comment (
-    id SERIAL PRIMARY KEY,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    description TEXT NOT NULL,
-    author_id INT REFERENCES users(id) ON DELETE CASCADE,
-    voting_id INT REFERENCES voting(id) ON DELETE CASCADE
-);
-
 CREATE TABLE session (
     session_key VARCHAR(255) PRIMARY KEY,
     session_data TEXT,
