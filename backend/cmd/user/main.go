@@ -164,5 +164,5 @@ func main() {
 	e.GET("/users/:username", getUser)
 	e.PUT("/users/:username", updateUser) // Добавляем маршрут для обновления пользователя
 
-	e.Logger.Fatal(e.Start(":8080")) // Запуск сервера
+	e.Logger.Fatal(e.Start(":8087")) // Запуск сервера
 }

@@ -13,7 +13,7 @@ CREATE TABLE users (
 
 ручки
 
-POST http://localhost:8080/users/register
+POST http://localhost:8087/users/register
 {
     "username": "levan",
     "password": "passwordlev",
@@ -23,7 +23,7 @@ POST http://localhost:8080/users/register
     "date_of_birth": "2005-01-01" 
 }
 
-POST http://localhost:8080/users/login
+POST http://localhost:8087/users/login
 {
     "username": "levan",
     "password": "passwordlev"
@@ -31,9 +31,9 @@ POST http://localhost:8080/users/login
 
 Получаем jwt ключ
 
-GET http://localhost:8080/users/levan
+GET http://localhost:8087/users/levan
 
-PUT http://localhost:8080/users/levan
+PUT http://localhost:8087/users/levan
 {
     "email": "zaush@example.com",
     "gender": 1,
