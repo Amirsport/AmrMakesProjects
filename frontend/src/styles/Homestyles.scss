@@ -11,10 +11,13 @@
 }
 
 .voting-card {
+    display: flex; // Используем Flexbox
+    flex-direction: column; // Вертикальное выравнивание
+    justify-content: space-between; // Распределяем пространство между элементами
     background-color: #1e1e1e; // Темный фон для карточки
     border: 1px solid #403d3d; // Цвет рамки
     border-radius: 8px; // Закругленные углы
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); // Тень для эффекта подня ```scss
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); // Тень для эффекта поднятия
     padding: 15px; // Внутренние отступы
 }
 
@@ -33,4 +36,8 @@
 
 .voting-type, .voting-author {
     color: #aaaaaa; // Цвет для типа голосования и автора
+}
+
+.btn {
+    margin-top: auto; // Отодвигаем кнопку вниз
 }

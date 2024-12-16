@@ -1,6 +1,5 @@
 // src/pages/Profile.jsx
 import React, { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
 import '../styles/Profilestyles.scss'
 
 const Profile = () => {
@@ -11,7 +10,6 @@ const Profile = () => {
     const [country, setCountry] = useState('');
     const [gender, setGender] = useState(0); // 0 - женский, 1 - мужской
     const [dateOfBirth, setDateOfBirth] = useState('');
-    const navigate = useNavigate();
 
     // Получение данных пользователя
     const fetchUserData = async () => {

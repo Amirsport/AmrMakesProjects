@@ -1,0 +1,41 @@
+// src/styles/VotingDetailsStyles.scss
+.voting-details-container {
+    padding: 20px;
+    .error-message {
+        color: red;
+        margin-bottom: 20px;
+    }
+    h1, h2 {
+        margin: 20px 0;
+    }
+    .comments-list {
+        margin-top: 20px;
+        .comment-item {
+            border: 1px solid #ccc;
+            padding: 10px;
+            margin-bottom: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            .btn-delete {
+                background-color: red;
+                color: white;
+                border: none;
+                padding: 5px 10px;
+                cursor: pointer;
+            }
+        }
+    }
+    textarea {
+        width: 100%;
+        height: 60px;
+        margin-bottom: 10px;
+    }
+    .btn {
+        background-color: blue;
+        color: white;
+        border: none;
+        padding: 10px 15px;
+        cursor: pointer;
+    }
+}

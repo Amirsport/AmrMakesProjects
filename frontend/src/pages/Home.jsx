@@ -1,5 +1,6 @@
 // src/pages/Home.jsx
 import React, { useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
 import '../styles/Homestyles.scss'; // Подключаем стили для сетки
 
 const Home = () => {
@@ -40,6 +41,7 @@ const Home = () => {
                             <h5 className="voting-title">{voting.name}</h5>
                             <p className="voting-description">{voting.description}</p>
                             <p className="voting-author"><small>Автор: {voting.author.username}</small></p>
+                            <Link to={`/voting/${voting.id}`} className="btn">Подробности</Link> {/* Кнопка для перехода на страницу голосования */}
                         </div>
                     </div>
                 ))}

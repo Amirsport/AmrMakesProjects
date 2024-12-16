@@ -111,7 +111,7 @@ func createVoting(c echo.Context) error {
 	// Преобразование votingType в int
 	votingTypeInt, err := strconv.Atoi(votingType)
 	if err != nil || votingTypeInt < 1 || votingTypeInt > 3 {
-		return c.JSON(http.StatusBadRequest, "Ошибка: неверный voting_type")
+		return c.JSON(http.StatusBadRequest, "Ошибка: неверный voting _type")
 	}
 
 	// Создание структуры Voting
@@ -164,15 +164,31 @@ func createVoting(c echo.Context) error {
 	return c.JSON(http.StatusCreated, voting)
 }
 
+// Функция для получения деталей голосования
+func getVotingDetails(c echo.Context) error {
+	votingID, err := strconv.Atoi(c.Param("id"))
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, "Неверный ID голосования")
+	}
+
+	var voting Voting
+	if err := db.First(&voting, votingID).Error; err != nil {
+		if err == gorm.ErrRecordNotFound {
+			return c.JSON(http.StatusNotFound, "Голосование не найдено")
+		}
+		return c.JSON(http.StatusInternalServerError, "Ошибка при получении голосования")
+	}
+
+	return c.JSON(http.StatusOK, voting)
+}
+
 // Функция для получения всех голосований
-func getVotings(c echo.Context) error {
+func getAllVotings(c echo.Context) error {
 	var votings []Voting
-	if err := db.Preload("Author").Find(&votings).Error; err != nil {
-		log.Printf("Ошибка при получении голосований: %v", err)
+	if err := db.Preload("Author").Find(&votings).Error; err != nil { // Предзагрузка автора
 		return c.JSON(http.StatusInternalServerError, "Ошибка при получении голосований")
 	}
 
-	log.Printf("Получено голосований: %d", len(votings))
 	return c.JSON(http.StatusOK, votings)
 }
 
@@ -184,14 +200,15 @@ func main() {
 		AllowOrigins:  []string{"*"}, // Разрешаем все источники
 		AllowMethods:  []string{http.MethodGet, http.MethodPost, http.MethodPut, http.MethodDelete},
 		AllowHeaders:  []string{echo.HeaderContentType, echo.HeaderAuthorization},
-		ExposeHeaders: []string{echo.HeaderAuthorization},
+		ExposeHeaders: []string{"Authorization"},
 	}))
 
 	// Обслуживание статических файлов из директории media
 	e.Static("/media", "media")
 
 	e.POST("/votings", JWTMiddleware(createVoting)) // Применяем middleware
-	e.GET("/votings", getVotings)
+	e.GET("/votings/:id", getVotingDetails)
+	e.GET("/votings", getAllVotings) // Добавляем маршрут для получения всех голосований
 
 	e.Logger.Fatal(e.Start(":8081"))
 }
