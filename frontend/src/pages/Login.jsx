@@ -1,13 +1,13 @@
 // src/pages/Login.jsx
 import React, { useState } from 'react';
-import api from '../api';
-//import './Login.scss';
+import { useNavigate } from 'react-router-dom';
 
 const Login = () => {
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
     const [error, setError] = useState('');
     const [success, setSuccess] = useState('');
+    const navigate = useNavigate();
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -15,44 +15,42 @@ const Login = () => {
         setSuccess('');
 
         try {
-            const response = await api.post('/login', { username, password });
-            // Здесь вы можете сохранить токен в localStorage или в состоянии приложения
-            localStorage.setItem('token', response.data.token);
-            setSuccess('Login successful! Redirecting...');
-            // Перенаправление или выполнение других действий после успешного входа
+            const response = await fetch('http://localhost:8087/users/login', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ username, password }),
+            });
+
+            if (!response.ok) {
+                throw new Error('Ошибка входа. Попробуйте еще раз.');
+            }
+
+            const data = await response.json();
+            localStorage.setItem('token', data.token); // Сохраняем токен в localStorage
+            localStorage.setItem('username', username); // Сохраняем имя пользователя
+            setSuccess('Успешный вход! Перенаправление...');
             setTimeout(() => {
-                window.location.href = '/'; // Перенаправление на главную страницу
+                navigate('/'); // Перенаправление на главную страницу
             }, 2000);
         } catch (err) {
-            setError('Login failed. Please check your credentials and try again.');
+            const errorMessage = err.message || 'Ошибка входа. Попробуйте еще раз.';
+            setError(errorMessage);
         }
     };
 
     return (
         <div className="login-container">
-            <h1>Login</h1>
+            <h1>Вход</h1>
             <form onSubmit={handleSubmit}>
-                <label>
-                    Username:
-                    <input
-                        type="text"
-                        name="username"
-                        value={username}
-                        onChange={(e) => setUsername(e.target.value)}
-                        required
-                    />
+                <label>Имя пользователя:
+                    <input type="text" value={username} onChange={(e) => setUsername(e.target.value)} required />
                 </label>
-                <label>
-                    Password:
-                    <input
-                        type="password"
-                        name="password"
-                        value={password}
-                        onChange={(e) => setPassword(e.target.value)}
-                        required
-                    />
+                <label>Пароль:
+                    <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} required />
                 </label>
-                <button type="submit">Login</button>
+                <button type="submit">Войти</button>
             </form>
             {error && <div className="error-message">{error}</div>}
             {success && <div className="success-message">{success}</div>}

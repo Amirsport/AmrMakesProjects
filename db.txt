@@ -3,8 +3,154 @@ localhost
 5432
 postgres
 
-CREATE TABLE session (
-    session_key VARCHAR(255) PRIMARY KEY,
-    session_data TEXT,
-    expire_date TIMESTAMP
-);
+у меня ент таких файлов в проекте
+ещё раз структура проекта
+frontend/
+├── src/
+│   ├── components/
+│   │   ├── Header.jsx
+│   │   ├── Footer.jsx
+│   │   ├── VotingList.jsx
+│   │   └── VotingCard.jsx
+│   ├── pages/
+│   │   ├── Home.jsx
+│   │   ├── Registration.jsx
+│   │   ├── Login.jsx
+│   │   ├── VotingDetails.jsx
+│   │   └── Profile.jsx
+│   ├── api.js
+│   ├── App.jsx
+│   └── index.jsx
+└── public/
+1. Добавление комментария (POST)
+Метод: POST
+URL: http://localhost:8085/votings/:votingId/comments
+Headers:
+Authorization: Bearer {jwt_token}
+Body (JSON):
+{
+    "description": "Это мой комментарий"
+}
+
+2. Получение комментариев (GET)
+Метод: GET
+URL: http://localhost:8085/votings/:votingId/comments
+Headers:
+Authorization: Bearer {jwt_token}
+
+3. Удаление комментария (DELETE)
+Метод: DELETE
+URL: http://localhost:8085/votings/comments/:commentId
+Headers:
+Authorization: Bearer {jwt_token}
+
+1. Добавление жалобы (POST)
+Метод: POST
+URL: http://localhost:8086/votings/:votingId/complaints
+Headers:
+Authorization: Bearer {jwt_token}
+Content-Type: application/json
+Body (JSON):
+{
+    "description": "Это моя жалоба на голосование."
+}
+
+2. Получение жалоб (GET)
+Метод: GET
+URL: http://localhost:8086/complaints
+Headers:
+Authorization: Bearer {jwt_token}
+
+POST http://localhost:8087/users/register
+{
+    "username": "levan",
+    "password": "passwordlev",
+    "email": "zau@gmail.com",
+    "country": "Russia",
+    "gender": 1, // 1 для мужского пола, 0 для женского
+    "date_of_birth": "2005-01-01" 
+}
+
+POST http://localhost:8087/users/login
+{
+    "username": "levan",
+    "password": "passwordlev"
+}
+
+Получаем jwt ключ
+
+GET http://localhost:8087/users/levan
+
+PUT http://localhost:8087/users/levan
+{
+    "email": "zaush@example.com",
+    "gender": 1,
+    "date_of_birth": "1990-01-01",
+    "country": "Russia"
+}
+
+1. Добавление голоса
+Метод: POST
+URL: http://localhost:8084/votings/:votingId/votes
+Headers:
+Authorization: Bearer {jwt_token}
+Body (JSON):
+{
+    "variant_id": 1 // Замените на ID варианта, за который вы хотите проголосовать
+}
+
+2. Получение голосов
+Метод: GET
+URL: http://localhost:8084/votings/:votingId/votes
+Headers:
+Authorization: Bearer {jwt_token}
+
+3. Отзыв голоса
+Метод: DELETE
+URL: http://localhost:8084/votings/votes/:voteId
+Headers:
+Authorization: Bearer {jwt_token}
+
+1. Добавление варианта голосования
+Метод: POST
+URL: http://localhost:8083/votings/{votingId}/variants
+Заголовки:
+Authorization: Bearer {ваш_токен}
+Тело запроса (формат JSON):
+{
+    "description": "Описание нового варианта голосования"
+}
+
+2. Редактирование варианта голосования
+Метод: PUT
+URL: http://localhost:8083/votings/{votingId}/variants/{variantId}
+Заголовки:
+Authorization: Bearer {ваш_токен}
+{
+    "description": "Обновленное описание варианта голосования"
+}
+
+3. Удаление варианта голосования
+Метод: DELETE
+URL: http://localhost:8083/votings/{votingId}/variants/{variantId}
+Заголовки:
+Authorization: Bearer {ваш_токен}
+
+1. Создание голосования
+Метод: POST
+URL: http://localhost:8081/votings
+Body->form-data(для всего Text, для image - file)
+Headers: Authorization 'Bearer {jwt}'
+Тело запроса:
+{
+    "name": "Название голосования",
+    "description": "Описание голосования",
+    "author_id": 3,
+    "voting_type": 3, // 1 - дискретное, 2 - выбор одного варианта, 3 - выбор пары вариантов
+    "image": "Путь к изображению"
+}
+
+2. Получение всех голосований
+Метод: GET
+URL: http://localhost:8081/votings
+

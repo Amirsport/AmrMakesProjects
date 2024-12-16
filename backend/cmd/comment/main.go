@@ -7,6 +7,7 @@ import (
 
 	"github.com/dgrijalva/jwt-go"
 	"github.com/labstack/echo/v4"
+	"github.com/labstack/echo/v4/middleware" // Импортируем middleware для CORS
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 )
@@ -129,6 +130,12 @@ func deleteComment(c echo.Context) error {
 func main() {
 	initDB() // Инициализация базы данных
 	e := echo.New()
+	e.Use(middleware.CORSWithConfig(middleware.CORSConfig{
+		AllowOrigins:  []string{"*"}, // Разрешаем все источники
+		AllowMethods:  []string{http.MethodGet, http.MethodPost, http.MethodPut, http.MethodDelete},
+		AllowHeaders:  []string{echo.HeaderContentType, echo.HeaderAuthorization},
+		ExposeHeaders: []string{echo.HeaderAuthorization},
+	}))
 	e.POST("/votings/:votingId/comments", addComment)
 	e.GET("/votings/:votingId/comments", getComments)
 	e.DELETE("/votings/comments/:commentId", deleteComment) // Добавляем маршрут для удаления комментария

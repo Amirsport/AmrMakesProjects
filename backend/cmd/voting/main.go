@@ -7,24 +7,41 @@ import (
 	"os"
 	"path/filepath"
 	"strconv"
+	"time"
 
 	"github.com/dgrijalva/jwt-go"
 	"github.com/labstack/echo/v4"
+	"github.com/labstack/echo/v4/middleware" // Импортируем middleware для CORS
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 )
+
+type User struct {
+	ID          uint      `json:"id" gorm:"primaryKey"`
+	Password    string    `json:"password"`
+	LastLogin   time.Time `json:"last_login"`
+	IsSuperuser bool      `json:"is_superuser" gorm:"default:false"`
+	Username    string    `json:"username" gorm:"unique"`
+	Email       string    `json:"email" gorm:"unique"`
+	DateJoined  time.Time `json:"date_joined" gorm:"default:CURRENT_TIMESTAMP"`
+	Country     string    `json:"country"`
+	Gender      int       `json:"gender"`        // 0 - женский, 1 - мужской
+	DateOfBirth string    `json:"date_of_birth"` // Изменено на string
+}
 
 type Voting struct {
 	ID          int    `json:"id" gorm:"primaryKey"`
 	Name        string `json:"name"`
 	Description string `json:"description"`
-	AuthorID    int    `json:"author_id"`   // Поле для ID автора
-	VotingType  int    `json:"voting_type"` // Изменено на int для соответствия INTEGER
-	Image       string `json:"image"`       // Хранит путь к изображению
+	AuthorID    uint   `json:"author_id"`                         // Поле для ID автора
+	VotingType  int    `json:"voting_type"`                       // Изменено на int для соответствия INTEGER
+	Image       string `json:"image"`                             // Хранит путь к изображению
+	Author      User   `json:"author" gorm:"foreignKey:AuthorID"` // Добавьте это поле для связи с пользователем
 }
 
 type JWTClaims struct {
 	Username string `json:"username"`
+	ID       uint   `json:"id"`
 	jwt.StandardClaims
 }
 
@@ -68,19 +85,32 @@ func JWTMiddleware(next echo.HandlerFunc) echo.HandlerFunc {
 
 // Функция для создания голосования
 func createVoting(c echo.Context) error {
-	name := c.FormValue("name")
-	description := c.FormValue("description")
-	authorID := c.FormValue("author_id")
-	votingType := c.FormValue("voting_type")
-
-	// Преобразование authorID и votingType в int
-	authorIDInt, err := strconv.Atoi(authorID)
-	if err != nil {
-		return c.JSON(http.StatusBadRequest, "Ошибка: неверный author_id")
+	// Извлечение токена из заголовка
+	token := c.Request().Header.Get("Authorization")
+	if token == "" {
+		return c.JSON(http.StatusUnauthorized, "Отсутствует токен")
 	}
 
-	votingTypeInt, _ := strconv.Atoi(votingType)
-	if votingTypeInt < 1 || votingTypeInt > 3 {
+	// Удаляем "Bearer " из токена
+	token = token[len("Bearer "):]
+
+	claims := &JWTClaims{}
+	_, err := jwt.ParseWithClaims(token, claims, func(token *jwt.Token) (interface{}, error) {
+		return []byte("your_secret_key"), nil // Замените на ваш секретный ключ
+	})
+
+	if err != nil {
+		return c.JSON(http.StatusUnauthorized, "Неверный токен")
+	}
+
+	// Получение данных из формы
+	name := c.FormValue("name")
+	description := c.FormValue("description")
+	votingType := c.FormValue("voting_type")
+
+	// Преобразование votingType в int
+	votingTypeInt, err := strconv.Atoi(votingType)
+	if err != nil || votingTypeInt < 1 || votingTypeInt > 3 {
 		return c.JSON(http.StatusBadRequest, "Ошибка: неверный voting_type")
 	}
 
@@ -88,12 +118,8 @@ func createVoting(c echo.Context) error {
 	voting := Voting{
 		Name:        name,
 		Description: description,
-		AuthorID:    authorIDInt,
+		AuthorID:    claims.ID, // Используем ID из токена
 		VotingType:  votingTypeInt,
-	}
-	if err := c.Bind(&voting); err != nil {
-		log.Printf("Ошибка при привязке данных: %v", err)
-		return c.JSON(http.StatusBadRequest, err)
 	}
 
 	// Получение файла изображения
@@ -141,7 +167,7 @@ func createVoting(c echo.Context) error {
 // Функция для получения всех голосований
 func getVotings(c echo.Context) error {
 	var votings []Voting
-	if err := db.Find(&votings).Error; err != nil {
+	if err := db.Preload("Author").Find(&votings).Error; err != nil {
 		log.Printf("Ошибка при получении голосований: %v", err)
 		return c.JSON(http.StatusInternalServerError, "Ошибка при получении голосований")
 	}
@@ -153,6 +179,16 @@ func getVotings(c echo.Context) error {
 func main() {
 	initDB()
 	e := echo.New()
+
+	e.Use(middleware.CORSWithConfig(middleware.CORSConfig{
+		AllowOrigins:  []string{"*"}, // Разрешаем все источники
+		AllowMethods:  []string{http.MethodGet, http.MethodPost, http.MethodPut, http.MethodDelete},
+		AllowHeaders:  []string{echo.HeaderContentType, echo.HeaderAuthorization},
+		ExposeHeaders: []string{echo.HeaderAuthorization},
+	}))
+
+	// Обслуживание статических файлов из директории media
+	e.Static("/media", "media")
 
 	e.POST("/votings", JWTMiddleware(createVoting)) // Применяем middleware
 	e.GET("/votings", getVotings)

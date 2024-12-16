@@ -7,7 +7,8 @@ import Home from './pages/Home';
 import VotingDetails from './pages/VotingDetails';
 import Registration from './pages/Registration';
 import Login from './pages/Login';
-import Complaints from './pages/Complaints';
+import Profile from './pages/Profile';
+import CreateVoting from './pages/CreateVoting';
 
 const App = () => {
     return (
@@ -15,10 +16,11 @@ const App = () => {
             <Header />
             <Routes>
                 <Route path="/" element={<Home />} />
-                <Route path="/voting/:id" element={<VotingDetails />} />
+                <Route path="/voting/:votingId" element={<VotingDetails />} /> {/* Убедитесь, что здесь используется votingId */}
                 <Route path="/registration" element={<Registration />} />
                 <Route path="/login" element={<Login />} />
-                <Route path="/complaints" element={<Complaints />} />
+                <Route path="/profile" element={<Profile />} />
+                <Route path="/create-voting" element={<CreateVoting />} />
             </Routes>
             <Footer />
         </Router>

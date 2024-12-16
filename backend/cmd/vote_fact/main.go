@@ -7,6 +7,7 @@ import (
 
 	"github.com/dgrijalva/jwt-go"
 	"github.com/labstack/echo/v4"
+	"github.com/labstack/echo/v4/middleware" // Импортируем middleware для CORS
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 )
@@ -168,6 +169,12 @@ func revokeVote(c echo.Context) error {
 func main() {
 	initDB() // Инициализация базы данных
 	e := echo.New()
+	e.Use(middleware.CORSWithConfig(middleware.CORSConfig{
+		AllowOrigins:  []string{"*"}, // Разрешаем все источники
+		AllowMethods:  []string{http.MethodGet, http.MethodPost, http.MethodPut, http.MethodDelete},
+		AllowHeaders:  []string{echo.HeaderContentType, echo.HeaderAuthorization},
+		ExposeHeaders: []string{echo.HeaderAuthorization},
+	}))
 	e.POST("/votings/:votingId/votes", addVote)
 	e.GET("/votings/:votingId/votes", getVotes)    // Получение голосов для голосования
 	e.DELETE("/votings/votes/:voteId", revokeVote) // Добавляем маршрут для отзыва голоса
