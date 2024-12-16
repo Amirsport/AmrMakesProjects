@@ -1,0 +1,24 @@
+{% extends 'base/base.html' %}
+
+{% block content %}
+    <h1 class="text-center">{{ pagename }}</h1>
+    <hr>
+    <form method="post">
+        {% csrf_token %}
+        {% for field in form %}
+            <div class="form-floating mb-3">
+                {{ field }}
+                <label class="form-label" for="{{ field.name }}">{{ field.label }}</label>
+            </div>
+        {% endfor %}
+        <input class="btn btn-primary" type="submit" value="Сохранить">
+    </form>
+    {% if form.errors %}
+        <br/>
+        {% for field, errs in form.errors.items %}
+          {% for err in errs %}
+            <div class="alert alert-danger" role="alert"><b>{{ field.label }}</b>: {{ err }}</div>
+          {% endfor %}
+        {% endfor %}
+    {% endif %}
+{% endblock %}

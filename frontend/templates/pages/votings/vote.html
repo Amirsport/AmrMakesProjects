@@ -1,0 +1,49 @@
+{% extends 'base/voting_page.html' %}
+
+{% block links %}
+    <a class="btn btn-info mb-1" href="{% url 'voting_details' voting.id %}" role="button">Подробности</a>
+    <a class="btn btn-danger mb-1" href="{% url 'complaint_add' voting.id %}" role="button">Подать жалобу</a>
+{% endblock %}
+{% block controls %}
+    <div class="row">
+        {% if message %}
+            <div class="alert alert-info" role="alert">{{ message }}</div>
+        {% endif %}
+        {% if error %}
+            <div class="alert alert-danger" role="alert">{{ error }}</div>
+        {% endif %}
+        {% if votefacts %}
+            <p>Вы уже проголосовали.</p>
+            <p>
+            {% for variant in voting.votevariant_set.all %}
+                {% if variant in votefacts %}
+                    <span class="btn btn-info disabled mt-3">✔️ {{ variant.description }}</span>
+                {% else %}
+                    <span class="btn btn-outline-info disabled mt-3">{{ variant.description }}</span>
+                {% endif %}
+            {% endfor %}
+            </p>
+            <form method="POST">
+                {% csrf_token %}
+                <input class="btn btn-danger" type="submit" name="decline_vote" value="Отозвать голос"/>
+            </form>
+        {% else %}
+            <form method="POST">
+                {% csrf_token %}
+                {% if voting.voting_type != 2 %}
+                    {% for variant in voting.votevariant_set.all %}
+                        <input class="btn btn-primary mb-2" type="submit" name="variant_name" value="{{ variant.description }}" id="variant-{{ variant.id }}"/>
+                    {% endfor %}
+                {% else %}
+                    {% for variant in voting.votevariant_set.all %}
+                        <div class="form-check text-start">
+                            <input class="form-check-input" type="checkbox" value="{{ variant.id }}" id="variant-{{ variant.id }}" name="variant-{{ variant.id }}"/>
+                            <label class="form-check-label" for="variant-{{ variant.id }}">{{ variant.description }}</label>
+                        </div>
+                    {% endfor %}
+                    <input class="btn btn-primary mt-3" type="submit" value="Проголосовать"/>
+                {% endif %}
+            </form>
+        {% endif %}
+    </div>
+{% endblock %}

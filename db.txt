@@ -1,0 +1,10 @@
+votings
+localhost
+5432
+postgres
+
+CREATE TABLE session (
+    session_key VARCHAR(255) PRIMARY KEY,
+    session_data TEXT,
+    expire_date TIMESTAMP
+);

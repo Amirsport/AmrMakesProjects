@@ -1,0 +1,63 @@
+{% extends 'base/base.html' %}
+
+
+{% block content %}
+    <h1 class="text-center">
+        {{ pagename }}
+        <div class="btn-group">
+            <button type="button" class="btn btn-primary dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+                Фильтр
+            </button>
+            <ul class="dropdown-menu">
+                <li><a class="dropdown-item{% if filter == "all" %} active{% endif %}" href="?">Вся история</a></li>
+                <li><a class="dropdown-item{% if filter == "myvotings" %} active{% endif %}" href="?filter=myvotings">Мои голосования</a></li>
+                <li><a class="dropdown-item{% if filter == "mycomplaints" %} active{% endif %}" href="?filter=mycomplaints">Мои жалобы</a></li>
+            </ul>
+        </div>
+
+    </h1>
+    <hr>
+    {% if votings %}
+        <div class="row">
+        {% for voting in votings %}
+            <div class="col-sm-4 mt-2">
+                <div class="card h-100 {% spaceless %}
+                    {% if not voting.0.is_ready_for_votefacts_creating and voting.1.is_author %}
+                     bg-danger text-body-emphasis
+                    {% elif voting.1.complaints %}
+                     bg-warning text-dark
+                    {% endif %} {% endspaceless %}">
+                    {% if voting.0.image != 'default.png' %}
+                        <img src="{{ voting.0.image.url }}" class="card-img-top" alt="Изображение голосования">
+                    {% endif %}
+                    <div class="card-body">
+                        <h3 class="card-title">{{ voting.0.name }} <span class="badge bg-info">Автор: {{ voting.0.author }}</span></h3>
+                        <p class="card-text">{{ voting.0.description }}</p>
+                        <div class="row">
+                            <div class="col mt-3">
+                                <a href="{% url 'voting_details' voting.0.id %}" class="btn btn-primary h-100">Подробности</a>
+                            </div>
+                        </div>
+                    </div>
+                    <ul class="list-group list-group-flush">
+                        {% if voting.1.is_author %}
+                            <li class="list-group-item">Вы создали это голосование{% if not voting.0.is_ready_for_votefacts_creating %}, но в нём слишком мало вариантов{% endif %}</li>
+                        {% endif %}
+                        {% for votefact in voting.1.votefacts %}
+                            <li class="list-group-item">Вы голосовали за <b>{{ votefact.variant.description }}</b> {{ votefact.created_at }}</li>
+                        {% endfor %}
+                        {% for comment in voting.1.comments %}
+                            <li class="list-group-item">Вы прокомментировали: <b>{{ comment.description }}</b> {{ comment.created_at }}</li>
+                        {% endfor %}
+                        {% for complaint in voting.1.complaints %}
+                            <li class="list-group-item">Вы пожаловались: <a href="{% url 'complaint_status' complaint.id %}">{{ complaint.description }}</a></li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            </div>
+        {% endfor %}
+        </div>
+    {% else %}
+        <div class="alert alert-primary" role="alert">Вы ещё нигде не голосовали</div>
+    {% endif %}
+{% endblock %}

@@ -1,0 +1,27 @@
+<div class="col-sm-4 mt-2">
+    <div class="card h-100">
+        {% if voting.image != 'default.png' %}
+            <img src="{{ voting.image.url }}" class="card-img-top" alt="Изображение голосования">
+        {% endif %}
+        <div class="card-body">
+            <h3 class="card-title">{{ voting.name }} <span class="badge bg-info">Автор: {{ voting.author }}</span></h3>
+            <p class="card-text">{{ voting.description }}</p>
+            <div class="row">
+                <div class="col mt-3">
+                    <a href="{% url 'voting_vote' voting.id %}" class="btn btn-primary h-100">Проголосовать</a>
+                </div>
+                <div class="col mt-3">
+                    <a href="{% url 'voting_details' voting.id %}" class="btn btn-primary h-100">Подробности</a>
+                </div>
+                {% if request.user.is_authenticated %}
+                    <form method="post">
+                        {% csrf_token %}
+                        <div class="col mt-3">
+                            <input type="submit" class="btn btn-primary h-100" name="fav-{{ voting.id}}" value="Добавить в избранное"/>
+                        </div>
+                    </form>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>

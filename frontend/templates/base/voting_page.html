@@ -1,0 +1,30 @@
+{% extends 'base/base.html' %}
+
+{% block content %}
+    <div class="container">
+        <div class="row">
+            <div class="col-md-3">
+                {% if voting.image != 'default.png' %}
+                    <img src="{{ voting.image.url }}" class="img-fluid rounded float-start">
+                {% endif %}
+            </div>
+            <div class="col-md-6">
+                <div class="container text-center mt-5">
+                    <div class="row">
+                        <div class="col"><h1>{{ voting.name }}</h1></div>
+                        <div class="col-md-4">
+                            {% block links %}
+                            {% endblock %}
+                        </div>
+                        <hr class="mt-3"/>
+                    </div>
+                    <div class="row">
+                        <div class="col"><p>{{ voting.description }}</p></div>
+                    </div>
+                    {% block controls %}
+                    {% endblock %}
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock content %}

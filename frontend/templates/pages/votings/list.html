@@ -1,0 +1,16 @@
+{% extends 'base/base.html' %}
+
+
+{% block content %}
+    <h1 class="text-center">Выберите голосование, в котором хотите принять участие</h1>
+    <hr>
+    {% if votings %}
+        <div class="row">
+        {% for voting in votings %}
+            {% include 'base/voting_list_card.html' %}
+        {% endfor %}
+        </div>
+    {% else %}
+        <div class="alert alert-primary" role="alert">Ни одного голосования ещё пока что не создано</div>
+    {% endif %}
+{% endblock %}

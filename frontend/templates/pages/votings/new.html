@@ -1,0 +1,31 @@
+{% extends 'base/base.html' %}
+
+{% block content %}
+    <h1 class="text-center">{{ pagename }}</h1>
+    <hr>
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        {% for field in form %}
+            {% if field.widget_type != 'hidden' %}
+                {% if field.widget_type != 'file' %}
+                    <div class="form-floating mb-3">
+                        {{ field }}
+                        <label class="form-label" for="{{ field.name }}">{{ field.label }}</label>
+                    </div>
+                {% else %}
+                    <div class="mb-3">
+                        <label class="form-label" for="{{ field.name }}">{{ field.label }}</label>
+                        {{ field }}
+                    </div>
+                {% endif %}
+            {% else %}
+                {{ field }}
+            {% endif %}
+        {% endfor %}
+        <div class="row">
+            <div class="col">
+                <input type="submit" class="btn btn-primary" value="Создать">
+            </div>
+        </div>
+    </form>
+{% endblock %}

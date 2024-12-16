@@ -1,0 +1,38 @@
+{% extends 'base/base.html' %}
+
+{% block content %}
+<h1 class="text-center">
+        {{ pagename }}
+    </h1>
+    <hr>
+    {% if votings %}
+        <div class="row">
+        {% for voting in votings %}
+            <div class="col-sm-4 mt-2">
+                <div class="card h-100">
+                    {% if voting.0.image != 'default.png' %}
+                        <img src="{{ voting.0.image.url }}" class="card-img-top" alt="Изображение голосования">
+                    {% endif %}
+                    <div class="card-body">
+                        <h3 class="card-title">{{ voting.0.name }} <span class="badge bg-info">Автор: {{ voting.0.author }}</span></h3>
+                        <p class="card-text">{{ voting.0.description }}</p>
+                        <div class="row">
+                            <div class="col mt-3">
+                                <a href="{% url 'voting_details' voting.0.id %}" class="btn btn-primary h-100">Подробности</a>
+                            </div>
+                        </div>
+                        <form method="post">
+                            {% csrf_token %}
+                            <div class="col mt-3">
+                                <input type="submit" class="btn btn-primary h-100" name="unfav-{{ voting.1.id }}" value="Удалить из избранного"/>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+        </div>
+    {% else %}
+        <div class="alert alert-primary" role="alert">У Вас нет избранных голосований</div>
+    {% endif %}
+{% endblock content %}

@@ -1,0 +1,15 @@
+{% extends 'base/base.html' %}
+
+{% block content %}
+    <div class="container">
+        <div class="card">
+            <div class="card-header text-center"><h1>{{ pagename }}</h1></div>
+            <ul class="list-group list-group-flush">
+                <li class="list-group-item fs-5 fw-bold">Голосование: <a href="{% url 'voting_details' voting.id %}">{{ voting.name }}</a></li>
+                <li class="list-group-item fs-5 fw-bold">Описание жалобы: {{ complaint.description }}</li>
+                <li class="list-group-item fs-5 fw-bold">Состояние жалобы: {{ complaint.get_status_display }}</li>
+            </ul>
+        </div>
+    </div>
+    <div class="alert alert-info mt-3" role="alert">Вы всегда можете просмотреть список ваших жалоб на странице <a href="{% url 'voting_history' %}">Мои взаимодействия с голосованиями</a></div>
+{% endblock %}

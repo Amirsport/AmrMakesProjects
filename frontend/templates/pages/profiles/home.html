@@ -1,0 +1,26 @@
+{% extends 'base/base.html' %}
+
+
+{% block content %}
+    <a class="btn btn-info btn-lg" href="{% url 'profile_edit' %}">Редактирование профиля</a>
+    <h1 class="text-center">{{ pagename }}</h1>
+    <hr>
+    <div class="card">
+        <h3 class="card-header text-center">{{ user.username }}</h3>
+        <div class="card-body text-center">
+            <h6 class="text-secondary">{{ user.email }}</h6>
+            <h5>Пол: {% if user.gender %}Мужской{% else %}Женский{% endif %} |
+                Дата рождения: {{ user.date_of_birth.day }}.{{ user.date_of_birth.month }}.{{ user.date_of_birth.year }} |
+                Дата регистрации: {{ user.date_joined.day }}.{{ user.date_joined.month }}.{{ user.date_joined.year }}
+            </h5>
+          <h5 class="text-end">Код страны: {{ user.country_code }}</h5>
+        </div>
+    </div>
+    {% for complaint in user.complaint_set.all %}
+        {% if forloop.first %}
+            <h2 class="mt-3">Список жалоб</h2>
+            {# Это дело внутри списка чтобы два раза не искать элементы #}
+        {% endif %}
+        <a href="{% url 'complaint_status' complaint.id %}" class="btn btn-primary">Жалоба "{{ complaint.description }}"</a>
+    {% endfor %}
+{% endblock %}
