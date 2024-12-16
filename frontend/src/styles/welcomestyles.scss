@@ -1,0 +1,49 @@
+/* Стили для контейнера страницы приветствия */
+.welcome-container {
+    display: flex; /* Используем Flexbox для центрирования */
+    flex-direction: column; /* Вертикальное направление */
+    align-items: center; /* Центрируем по горизонтали */
+    justify-content: flex-start; /* Выровнять содержимое к верхней части */
+    min-height: calc(100vh - 60px); /* Минимальная высота на всю высоту окна минус высота футера */
+    background-color: #121212; /* Темный фон */
+    color: #ffffff; /* Белый текст */
+    text-align: center; /* Центрируем текст */
+    padding: 20px; /* Отступы */
+    padding-top: 60px; /* Добавляем отступ сверху, чтобы не прилипать к верхней части */
+    box-sizing: border-box; /* Учитываем padding в высоте */
+}
+
+/* Стили для заголовка */
+.welcome-container h1 {
+    font-size: 2.5em; /* Размер шрифта заголовка */
+    margin-bottom: 20px; /* Отступ снизу */
+}
+
+/* Стили для изображения логотипа */
+.welcome-container img {
+    max-width: 200px; /* Максимальная ширина логотипа */
+    height: auto; /* Автоматическая высота */
+    margin-bottom: 20px; /* Отступ снизу */
+}
+
+/* Стили для текста */
+.welcome-container p {
+    font-size: 1.2em; /* Размер шрифта для текста */
+    margin-bottom: 20px; /* Отступ снизу */
+}
+
+/* Стили для кнопки регистрации */
+.welcome-container .btn {
+    background-color: #403d3d; /* Цвет кнопки */
+    color: #ffffff; /* Белый текст */
+    border: none; /* Убираем рамку */
+    border-radius: 5px; /* Закругленные углы */
+    padding: 10px 20px; /* Отступы внутри кнопки */
+    cursor: pointer; /* Курсор в виде указателя */
+    transition: background-color 0.3s; /* Плавный переход цвета */
+    text-decoration: none; /* Убираем подчеркивание */
+}
+
+.welcome-container .btn:hover {
+    background-color: #555; /* Цвет кнопки при наведении */
+}

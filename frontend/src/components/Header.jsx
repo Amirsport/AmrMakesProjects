@@ -1,17 +1,33 @@
 // src/components/Header.jsx
 import React from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+import '../styles/Headerstyles.scss';
 
-const Header = () => {
+const Header = ({ user, setUser  }) => {
+    const navigate = useNavigate();
+
+    const handleLogout = () => {
+        localStorage.removeItem('token');
+        localStorage.removeItem('username');
+        setUser (null); // Сбрасываем состояние пользователя
+        navigate('/login'); // Перенаправление на страницу логина
+    };
+
     return (
-        <header>
-            <nav>
-                <Link to="/">Home</Link>
-                <Link to="/registration">Registration</Link>
-                <Link to="/login">Login</Link>
-                <Link to="/create-voting">Создать голосование</Link> {/* Ссылка на создание голосования */}
-                <Link to="/profile">Профиль</Link> {/* Ссылка на страницу профиля */}
-            </nav>
+        <header className="header">
+            <div className="brand">BMSTU votings</div>
+            <div className="user-info">
+                <Link to="/home" className="btn">Главная</Link> {/* Кнопка для перехода на главную страницу */}
+                {user ? (
+                    <>
+                        <Link to="/create-voting" className="btn">Создать голосование</Link>
+                        <Link to="/profile" className="btn">Профиль</Link>
+                        <button className="btn" onClick={handleLogout}>Выйти</button>
+                    </>
+                ) : (
+                    <Link to="/login" className="btn">Логин</Link>
+                )}
+            </div>
         </header>
     );
 };

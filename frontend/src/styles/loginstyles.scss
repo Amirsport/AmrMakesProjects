@@ -1,0 +1,60 @@
+/* Стили для контейнера логина */
+.login-container {
+    max-width: 400px; /* Максимальная ширина контейнера */
+    margin: 0 auto; /* Центрируем контейнер */
+    padding: 20px; /* Отступы внутри контейнера */
+    background-color: #1e1e1e; /* Темный фон */
+    border-radius: 8px; /* Закругленные углы */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Тень для контейнера */
+}
+
+/* Стили для заголовка */
+.login-container h1 {
+    color: #ffffff; /* Белый цвет текста */
+    text-align: center; /* Центрируем текст */
+}
+
+/* Стили для меток и полей ввода */
+label {
+    display: block; /* Блочный элемент */
+    margin-bottom: 10px; /* Отступ снизу */
+    color: #ffffff; /* Белый цвет текста */
+}
+
+input[type="text"],
+input[type="password"] {
+    width: 100%; /* Ширина 100% */
+    padding: 10px; /* Отступы внутри поля */
+    margin-bottom: 15px; /* Отступ снизу */
+    border: 1px solid #403d3d; /* Цвет рамки */
+    border-radius: 5px; /* Закругленные углы */
+    background-color: #2a2a2a; /* Темный фон для полей ввода */
+    color: #ffffff; /* Белый текст */
+}
+
+/* Стили для кнопки */
+button {
+    width: 100%; /* Ширина 100% */
+    padding: 10px; /* Отступы внутри кнопки */
+    background-color: #403d3d; /* Цвет кнопки */
+    color: #ffffff; /* Белый текст */
+    border: none; /* Убираем рамку */
+    border-radius: 5px; /* Закругленные углы */
+    cursor: pointer; /* Курсор в виде указателя */
+    transition: background-color 0.3s; /* Плавный переход цвета */
+}
+
+button:hover {
+    background-color: #555; /* Цвет кнопки при наведении */
+}
+
+/* Стили для сообщений об ошибках и успехе */
+.error-message {
+    color: #ff4d4d; /* Красный цвет для ошибок */
+    margin-top: 10px; /* Отступ сверху */
+}
+
+.success-message {
+    color: #4caf50; /* Зеленый цвет для успеха */
+    margin-top: 10px; /* Отступ сверху */
+}

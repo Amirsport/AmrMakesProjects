@@ -1,0 +1,94 @@
+// Appstyles.scss
+
+// Общие переменные
+$primary-color: #121212; // Темный фон
+$secondary-color: #403d3d; // Цвет кнопок
+$text-color: #ffffff; // Цвет текста
+$font-family: Arial, sans-serif; // Шрифт
+
+// Стили для body
+body {
+    margin: 0; // Убираем стандартные отступы
+    padding: 0; // Убираем стандартные отступы
+    background-color: $primary-color; // Фон страницы
+    color: $text-color; // Цвет текста
+    font-family: $font-family; // Шрифт
+    display: flex; // Используем Flexbox
+    flex-direction: column; // Вертикальное направление
+    min-height: 100vh; // Минимальная высота 100% от высоты окна
+}
+
+// Стили для контейнера
+.container {
+    max-width: 1200px; // Максимальная ширина контейнера
+    width: 100%; // Ширина 100%
+    margin: 0 auto; // Центрируем контейнер
+    padding: 20px; // Отступы по краям
+    box-sizing: border-box; // Учитываем padding в ширине
+}
+
+// Стили для заголовков
+h1, h2, h3, h4, h5, h6 {
+    color: $text-color; // Цвет заголовков
+    margin: 0; // Убираем стандартные отступы
+}
+
+// Стили для кнопок
+.btn {
+    background-color: $secondary-color; // Цвет кнопки
+    color: $text-color; // Цвет текста
+    border: none; // Убираем рамку
+    border-radius: 5px; // Закругленные углы
+    padding: 10px 20px; // Отступы внутри кнопки
+    cursor: pointer; // Курсор в виде указателя
+    transition: background-color 0.3s; // Плавный переход цвета
+    text-decoration: none; // Убираем подчеркивание
+
+    &:hover {
+        background-color: darken($secondary-color, 10%); // Цвет кнопки при наведении
+    }
+}
+
+// Стили для футера
+.footer {
+    background-color: #1e1e1e; // Цвет фона футера
+    color: $text-color; // Цвет текста футера
+    text-align: center; // Центрируем текст
+    padding: 10px 0; // Отступы
+    position: relative; // Относительное позиционирование
+    bottom: 0; // Прикрепляем футер к низу
+    width: 100%; // Ширина 100%
+}
+
+// Стили для страницы приветствия
+.welcome-container {
+    display: flex; // Используем Flexbox для центрирования
+    flex-direction: column; // Вертикальное направление
+    align-items: center; // Центрируем по горизонтали
+    justify-content: flex-start; // Выровнять содержимое к верхней части
+    min-height: calc(100vh - 60px); // Минимальная высота на всю высоту окна минус высота футера
+    background-color: $primary-color; // Темный фон
+    color: $text-color; // Белый текст
+    text-align: center; // Центрируем текст
+    padding: 20px; // Отступы
+    padding-top: 60px; // Добавляем отступ сверху, чтобы не прилипать к верхней части
+    box-sizing: border-box; // Учитываем padding в высоте
+
+    h1 {
+        font-size: 2.5em; // Размер шрифта заголовка
+        margin-bottom: 20px; // Отступ снизу
+    }
+
+    img {
+        max-width: 200px; // Максимальная ширина логотипа
+        height: auto; // Автоматическая высота
+        margin-bottom: 20px; // Отступ снизу
+    }
+
+    p {
+        font-size: 1.2em; // Размер шрифта для текста
+        margin-bottom: 20px; // Отступ снизу
+    }
+}
+
+// Другие стили для страниц можно добавлять здесь

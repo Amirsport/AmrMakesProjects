@@ -1,13 +1,14 @@
 // src/pages/Registration.jsx
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import '../styles/registrationstyles.scss'
 
 const Registration = () => {
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
     const [email, setEmail] = useState('');
     const [country, setCountry] = useState('');
-    const [gender, setGender] = useState(0); // 0 - женский, 1 - мужской
+    const [gender, setGender] = useState(1); // 0 - женский, 1 - мужской
     const [dateOfBirth, setDateOfBirth] = useState('');
     const [error, setError] = useState('');
     const [success, setSuccess] = useState('');

@@ -1,11 +1,12 @@
 // src/components/Footer.jsx
 import React from 'react';
-//import './Footer.scss';
+import '../styles/footerstyles.scss';
 
 const Footer = () => {
+    const currentYear = new Date().getFullYear();
     return (
-        <footer>
-            <p>&copy; {new Date().getFullYear()} Votings</p>
+        <footer className="footer">
+            RVS team, {currentYear}
         </footer>
     );
 };

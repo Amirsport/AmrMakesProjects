@@ -1,8 +1,9 @@
 // src/pages/Login.jsx
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import '../styles/loginstyles.scss'; // Подключаем стили для логина
 
-const Login = () => {
+const Login = ({ setUser  }) => {
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
     const [error, setError] = useState('');
@@ -24,16 +25,22 @@ const Login = () => {
             });
 
             if (!response.ok) {
+                if (response.status === 401) {
+                    // Если статус 401, перенаправляем на страницу приветствия
+                    navigate('/');
+                    return;
+                }
                 throw new Error('Ошибка входа. Попробуйте еще раз.');
             }
 
             const data = await response.json();
             localStorage.setItem('token', data.token); // Сохраняем токен в localStorage
             localStorage.setItem('username', username); // Сохраняем имя пользователя
+            setUser (username); // Обновляем состояние пользователя
             setSuccess('Успешный вход! Перенаправление...');
             setTimeout(() => {
-                navigate('/'); // Перенаправление на главную страницу
-            }, 2000);
+                navigate('/home'); // Перенаправление на главную страницу
+            },  2000);
         } catch (err) {
             const errorMessage = err.message || 'Ошибка входа. Попробуйте еще раз.';
             setError(errorMessage);

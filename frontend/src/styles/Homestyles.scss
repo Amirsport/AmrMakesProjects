@@ -1,0 +1,36 @@
+// src/styles/HomeStyles.scss
+
+.home-container {
+    padding: 20px; // Отступы
+}
+
+.voting-list {
+    display: grid; // Используем Grid
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); // Сетка с минимальной шириной
+    gap: 20px; // Промежутки между элементами
+}
+
+.voting-card {
+    background-color: #1e1e1e; // Темный фон для карточки
+    border: 1px solid #403d3d; // Цвет рамки
+    border-radius: 8px; // Закругленные углы
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); // Тень для эффекта подня ```scss
+    padding: 15px; // Внутренние отступы
+}
+
+.voting-image img {
+    width: 100%; // Ширина изображения 100%
+    border-radius: 5px; // Закругленные углы для изображения
+}
+
+.voting-title {
+    color: #ffffff; // Цвет заголовка
+}
+
+.voting-description {
+    color: #cccccc; // Цвет описания
+}
+
+.voting-type, .voting-author {
+    color: #aaaaaa; // Цвет для типа голосования и автора
+}

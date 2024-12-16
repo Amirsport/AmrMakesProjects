@@ -1,5 +1,6 @@
 // src/pages/Home.jsx
 import React, { useEffect, useState } from 'react';
+import '../styles/Homestyles.scss'; // Подключаем стили для сетки
 
 const Home = () => {
     const [votings, setVotings] = useState([]);
@@ -28,24 +29,20 @@ const Home = () => {
             <h1>Все голосования</h1>
             {error && <div className="error-message">{error}</div>}
             <div className="voting-list">
-            {votings.map(voting => (
-    <div key={voting.id} className="card mb-3">
-        <div className="row g-0">
-            <div className="col-md-4">
-                {voting.image && (
-                    <img src={`http://localhost:8081/${voting.image}`} className="img-fluid rounded-start" alt={voting.name} />                )}
-            </div>
-            <div className="col-md-8">
-                <div className="card-body">
-                    <h5 className="card-title">{voting.name}</h5>
-                    <p className="card-text">{voting.description}</p>
-                    <p className="card-text"><small className="text-muted">Тип голосования: {voting.voting_type}</small></p>
-                    <p className="card-text"><small className="text-muted">Автор: {voting.author.username}</small></p> {/* Отображение имени автора */}
-                </div>
-            </div>
-        </div>
-    </div>
-))}
+                {votings.map(voting => (
+                    <div key={voting.id} className="voting-card">
+                        <div className="voting-image">
+                            {voting.image && (
+                                <img src={`http://localhost:8081/${voting.image}`} className="img-fluid" alt={voting.name} />
+                            )}
+                        </div>
+                        <div className="voting-body">
+                            <h5 className="voting-title">{voting.name}</h5>
+                            <p className="voting-description">{voting.description}</p>
+                            <p className="voting-author"><small>Автор: {voting.author.username}</small></p>
+                        </div>
+                    </div>
+                ))}
             </div>
         </div>
     );
