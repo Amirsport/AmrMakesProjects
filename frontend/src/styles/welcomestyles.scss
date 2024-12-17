@@ -1,0 +1,36 @@
+$primary-color: #121212; // Темный фон
+$secondary-color: #403d3d; // Цвет кнопок
+$text-color: #ffffff; // Цвет текста
+$font-family: Arial, sans-serif; // Шрифт
+
+.welcome-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    /* Remove min-height */
+    background-color: $primary-color;
+    color: $text-color;
+    text-align: center;
+    padding: 20px;
+    padding-top: 40px;
+    box-sizing: border-box;
+
+    h1 {
+        font-size: 2.5em;
+        margin-bottom: 20px;
+    }
+
+    img {
+        max-width: 200px;
+        height: auto;
+        margin-bottom: 20px;
+        /* Allow image to take up remaining space */
+        flex: 1;
+    }
+
+    p {
+        font-size: 1.2em;
+        margin-bottom: 20px;
+    }
+}

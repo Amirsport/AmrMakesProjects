@@ -1,0 +1,41 @@
+/* styles.scss */
+
+/* Стили для Header */
+.header {
+    display: flex;
+    justify-content: space-between; /* Размещаем элементы по краям */
+    align-items: center; /* Центрируем по вертикали */
+    background-color: #1e1e1e; /* Темный фон */
+    padding: 10px 20px; /* Отступы */
+    border-bottom: 1px solid #403d3d; /* Цвет рамки */
+}
+
+.header .brand {
+    font-size: 1.8em; /* Большой шрифт для названия */
+    color: #ffffff; /* Белый текст */
+}
+
+.header .user-info {
+    display: flex;
+    align-items: center; /* Центрируем по вертикали */
+}
+
+.header .user-info span {
+    margin-right: 10px; /* Отступ между именем пользователя и кнопкой выхода */
+    color: #ffffff; /* Белый текст */
+}
+
+.header .btn {
+    margin-left: 10px; /* Отступ между кнопками */
+    background-color: #403d3d; /* Цвет кнопок */
+    color: #ffffff; /* Белый текст */
+    border: none;
+    border-radius: 5px;
+    padding: 10px 15px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.header .btn:hover {
+    background-color: #555; /* Цвет кнопки при наведении */
+}

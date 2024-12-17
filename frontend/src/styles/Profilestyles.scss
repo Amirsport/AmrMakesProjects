@@ -1,0 +1,20 @@
+// profile.scss
+.profile-container {
+    display: flex; // Используем Flexbox
+    flex-direction: column; // Вертикальное направление
+    align-items: center; // Центрируем по горизонтали
+    padding: 20px; // Отступы
+    background-color: #121212; // Светлый фон
+    border-radius: 5px; // Закругленные углы
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); // Тень
+
+    h1 {
+        margin-bottom: 20px; // Отступ снизу
+    }
+
+    .profile-info {
+        width: 100%; // Ширина 100%
+        max-width: 600px; // Максимальная ширина
+        margin: 0 auto; // Центрируем
+    }
+}

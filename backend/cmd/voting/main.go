@@ -7,24 +7,47 @@ import (
 	"os"
 	"path/filepath"
 	"strconv"
+	"time"
 
 	"github.com/dgrijalva/jwt-go"
 	"github.com/labstack/echo/v4"
+	"github.com/labstack/echo/v4/middleware" // Импортируем middleware для CORS
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 )
+
+type User struct {
+	ID          uint      `json:"id" gorm:"primaryKey"`
+	Password    string    `json:"password"`
+	LastLogin   time.Time `json:"last_login"`
+	IsSuperuser bool      `json:"is_superuser" gorm:"default:false"`
+	Username    string    `json:"username" gorm:"unique"`
+	Email       string    `json:"email" gorm:"unique"`
+	DateJoined  time.Time `json:"date_joined" gorm:"default:CURRENT_TIMESTAMP"`
+	Country     string    `json:"country"`
+	Gender      int       `json:"gender"`        // 0 - женский, 1 - мужской
+	DateOfBirth string    `json:"date_of_birth"` // Изменено на string
+}
 
 type Voting struct {
 	ID          int    `json:"id" gorm:"primaryKey"`
 	Name        string `json:"name"`
 	Description string `json:"description"`
-	AuthorID    int    `json:"author_id"`   // Поле для ID автора
-	VotingType  int    `json:"voting_type"` // Изменено на int для соответствия INTEGER
-	Image       string `json:"image"`       // Хранит путь к изображению
+	AuthorID    uint   `json:"author_id"`
+	VotingType  int    `json:"voting_type"`
+	Image       string `json:"image"`
+	Author      User   `json:"author" gorm:"foreignKey:AuthorID"`
+}
+
+type VoteVariant struct {
+	ID          int    `json:"id" gorm:"primaryKey"`
+	Description string `json:"description"` // Поле для описания варианта
+	VotingID    int    `json:"voting_id"`   // ID голосования
 }
 
 type JWTClaims struct {
 	Username string `json:"username"`
+	ID       uint   `json:"id"`
 	jwt.StandardClaims
 }
 
@@ -68,32 +91,41 @@ func JWTMiddleware(next echo.HandlerFunc) echo.HandlerFunc {
 
 // Функция для создания голосования
 func createVoting(c echo.Context) error {
-	name := c.FormValue("name")
-	description := c.FormValue("description")
-	authorID := c.FormValue("author_id")
-	votingType := c.FormValue("voting_type")
-
-	// Преобразование authorID и votingType в int
-	authorIDInt, err := strconv.Atoi(authorID)
-	if err != nil {
-		return c.JSON(http.StatusBadRequest, "Ошибка: неверный author_id")
+	// Извлечение токена из заголовка
+	token := c.Request().Header.Get("Authorization")
+	if token == "" {
+		return c.JSON(http.StatusUnauthorized, "Отсутствует токен")
 	}
 
-	votingTypeInt, _ := strconv.Atoi(votingType)
-	if votingTypeInt < 1 || votingTypeInt > 3 {
-		return c.JSON(http.StatusBadRequest, "Ошибка: неверный voting_type")
+	// Удаляем "Bearer " из токена
+	token = token[len("Bearer "):]
+
+	claims := &JWTClaims{}
+	_, err := jwt.ParseWithClaims(token, claims, func(token *jwt.Token) (interface{}, error) {
+		return []byte("your_secret_key"), nil // Замените на ваш секретный ключ
+	})
+
+	if err != nil {
+		return c.JSON(http.StatusUnauthorized, "Неверный токен")
+	}
+
+	// Получение данных из формы
+	name := c.FormValue("name")
+	description := c.FormValue("description")
+	votingType := c.FormValue("voting_type")
+
+	// Преобразование votingType в int
+	votingTypeInt, err := strconv.Atoi(votingType)
+	if err != nil || votingTypeInt < 1 || votingTypeInt > 3 {
+		return c.JSON(http.StatusBadRequest, "Ошибка: неверный voting _type")
 	}
 
 	// Создание структуры Voting
 	voting := Voting{
 		Name:        name,
 		Description: description,
-		AuthorID:    authorIDInt,
+		AuthorID:    claims.ID, // Используем ID из токена
 		VotingType:  votingTypeInt,
-	}
-	if err := c.Bind(&voting); err != nil {
-		log.Printf("Ошибка при привязке данных: %v", err)
-		return c.JSON(http.StatusBadRequest, err)
 	}
 
 	// Получение файла изображения
@@ -138,24 +170,97 @@ func createVoting(c echo.Context) error {
 	return c.JSON(http.StatusCreated, voting)
 }
 
+// Функция для получения деталей голосования с вариантами
+func getVotingDetails(c echo.Context) error {
+	votingID, err := strconv.Atoi(c.Param("id"))
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, "Неверный ID голосования")
+	}
+
+	var voting Voting
+	// Preload the Author to get author details
+	if err := db.Preload("Author").First(&voting, votingID).Error; err != nil {
+		if err == gorm.ErrRecordNotFound {
+			return c.JSON(http.StatusNotFound, "Голосование не найдено")
+		}
+		return c.JSON(http.StatusInternalServerError, "Ошибка при получении голосования")
+	}
+
+	// Получаем варианты голосования
+	var variants []VoteVariant
+	if err := db.Where("voting_id = ?", votingID).Find(&variants).Error; err != nil {
+		return c.JSON(http.StatusInternalServerError, "Ошибка при получении вариантов голосования")
+	}
+
+	// Возвращаем голосование вместе с его автором и вариантами
+	return c.JSON(http.StatusOK, echo.Map{
+		"voting":   voting,
+		"variants": variants,
+	})
+}
+
 // Функция для получения всех голосований
-func getVotings(c echo.Context) error {
+func getAllVotings(c echo.Context) error {
 	var votings []Voting
-	if err := db.Find(&votings).Error; err != nil {
-		log.Printf("Ошибка при получении голосований: %v", err)
+	if err := db.Preload("Author").Find(&votings).Error; err != nil { // Предзагрузка автора
 		return c.JSON(http.StatusInternalServerError, "Ошибка при получении голосований")
 	}
 
-	log.Printf("Получено голосований: %d", len(votings))
 	return c.JSON(http.StatusOK, votings)
+}
+
+// Функция для обновления голосования
+func updateVoting(c echo.Context) error {
+	votingID, err := strconv.Atoi(c.Param("id"))
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, "Неверный ID голосования")
+	}
+
+	var updatedVoting Voting
+	if err := c.Bind(&updatedVoting); err != nil {
+		return c.JSON(http.StatusBadRequest, "Ошибка при получении данных")
+	}
+
+	// Проверка, существует ли голосование
+	var existingVoting Voting
+	if err := db.First(&existingVoting, votingID).Error; err != nil {
+		if err == gorm.ErrRecordNotFound {
+			return c.JSON(http.StatusNotFound, "Голосование не найдено")
+		}
+		return c.JSON(http.StatusInternalServerError, "Ошибка при получении голосования")
+	}
+
+	// Обновление полей голосования
+	existingVoting.Name = updatedVoting.Name
+	existingVoting.Description = updatedVoting.Description
+	existingVoting.VotingType = updatedVoting.VotingType
+
+	// Сохранение обновленного голосования в базе данных
+	if err := db.Save(&existingVoting).Error; err != nil {
+		return c.JSON(http.StatusInternalServerError, "Ошибка при обновлении голосования")
+	}
+
+	return c.JSON(http.StatusOK, existingVoting)
 }
 
 func main() {
 	initDB()
 	e := echo.New()
 
+	e.Use(middleware.CORSWithConfig(middleware.CORSConfig{
+		AllowOrigins:  []string{"*"}, // Разрешаем все источники
+		AllowMethods:  []string{http.MethodGet, http.MethodPost, http.MethodPut, http.MethodDelete},
+		AllowHeaders:  []string{echo.HeaderContentType, echo.HeaderAuthorization},
+		ExposeHeaders: []string{"Authorization"},
+	}))
+
+	// Обслуживание статических файлов из директории media
+	e.Static("/media", "media")
+
 	e.POST("/votings", JWTMiddleware(createVoting)) // Применяем middleware
-	e.GET("/votings", getVotings)
+	e.GET("/votings/:id", getVotingDetails)
+	e.PUT("/votings/:id", JWTMiddleware(updateVoting)) // Добавляем маршрут для обновления голосования
+	e.GET("/votings", getAllVotings)                   // Добавляем маршрут для получения всех голосований
 
 	e.Logger.Fatal(e.Start(":8081"))
 }

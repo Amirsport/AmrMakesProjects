@@ -7,6 +7,7 @@ import (
 
 	"github.com/dgrijalva/jwt-go"
 	"github.com/labstack/echo/v4"
+	"github.com/labstack/echo/v4/middleware" // Импортируем middleware для CORS
 	"golang.org/x/crypto/bcrypt"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
@@ -159,6 +160,15 @@ func main() {
 	initDB() // Инициализация базы данных
 
 	e := echo.New()
+
+	// Настройка CORS
+	e.Use(middleware.CORSWithConfig(middleware.CORSConfig{
+		AllowOrigins:  []string{"*"}, // Разрешаем все источники
+		AllowMethods:  []string{http.MethodGet, http.MethodPost, http.MethodPut, http.MethodDelete},
+		AllowHeaders:  []string{echo.HeaderContentType, echo.HeaderAuthorization},
+		ExposeHeaders: []string{echo.HeaderAuthorization},
+	}))
+
 	e.POST("/users/register", registerUser)
 	e.POST("/users/login", loginUser)
 	e.GET("/users/:username", getUser)

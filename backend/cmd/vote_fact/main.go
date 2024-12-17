@@ -1,12 +1,14 @@
 package main
 
 import (
+	"log"
 	"net/http"
 	"strconv"
 	"time"
 
 	"github.com/dgrijalva/jwt-go"
 	"github.com/labstack/echo/v4"
+	"github.com/labstack/echo/v4/middleware" // Импортируем middleware для CORS
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 )
@@ -123,12 +125,14 @@ func getVariantIDs(variants []VoteVariant) []int {
 	return ids
 }
 
-// Функция для отзыва голоса
 func revokeVote(c echo.Context) error {
-	voteID, err := strconv.Atoi(c.Param("voteId")) // Измените на voteId
+	voteID, err := strconv.Atoi(c.Param("voteId"))
 	if err != nil {
 		return c.JSON(http.StatusBadRequest, "Неверный ID голоса")
 	}
+
+	// Log the vote ID being revoked
+	log.Printf("Attempting to revoke vote with ID: %d", voteID)
 
 	// Получаем ID пользователя из токена
 	token := c.Request().Header.Get("Authorization")
@@ -141,7 +145,7 @@ func revokeVote(c echo.Context) error {
 
 	claims := &JWTClaims{}
 	_, err = jwt.ParseWithClaims(token, claims, func(token *jwt.Token) (interface{}, error) {
-		return []byte("your_secret_key"), nil // Замените на ваш секретный ключ
+		return []byte("your_secret_key"), nil
 	})
 
 	if err != nil {
@@ -168,6 +172,12 @@ func revokeVote(c echo.Context) error {
 func main() {
 	initDB() // Инициализация базы данных
 	e := echo.New()
+	e.Use(middleware.CORSWithConfig(middleware.CORSConfig{
+		AllowOrigins:  []string{"*"}, // Разрешаем все источники
+		AllowMethods:  []string{http.MethodGet, http.MethodPost, http.MethodPut, http.MethodDelete},
+		AllowHeaders:  []string{echo.HeaderContentType, echo.HeaderAuthorization},
+		ExposeHeaders: []string{echo.HeaderAuthorization},
+	}))
 	e.POST("/votings/:votingId/votes", addVote)
 	e.GET("/votings/:votingId/votes", getVotes)    // Получение голосов для голосования
 	e.DELETE("/votings/votes/:voteId", revokeVote) // Добавляем маршрут для отзыва голоса
