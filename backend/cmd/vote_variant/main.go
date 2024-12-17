@@ -229,9 +229,6 @@ func isCreator(c echo.Context, votingID int) bool {
 		return false
 	}
 
-	// Выводим в консоль ID пользователя и ID автора
-	fmt.Printf("User  ID: %d, Author ID: %d\n", claims.ID, voting.AuthorID)
-
 	// Сравниваем author_id с ID пользователя из токена
 	return voting.AuthorID == claims.ID
 }

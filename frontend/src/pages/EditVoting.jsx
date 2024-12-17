@@ -1,39 +1,65 @@
+// src/pages/EditVoting.jsx
 import React, { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
-import '../styles/EditVotingStyles.scss';
+import { useParams, useNavigate } from 'react-router-dom';
 
 const EditVoting = () => {
     const { votingId } = useParams();
     const [voting, setVoting] = useState({ name: '', description: '', variants: [] });
     const [newVariant, setNewVariant] = useState('');
-    const [editingVariantId, setEditingVariantId] = useState(null);
     const [error, setError] = useState('');
+    const navigate = useNavigate();
 
-    useEffect(() => {
-        const fetchVotingDetails = async () => {
-            const token = localStorage.getItem('token');
-            try {
-                const response = await fetch(`http://localhost:8081/votings/${votingId}`, {
-                    headers: {
-                        'Authorization': `Bearer ${token}`,
-                    },
-                });
+    const fetchVotingDetails = async () => {
+        const token = localStorage.getItem('token');
+        try {
+            const response = await fetch(`http://localhost:8081/votings/${votingId}`, {
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                },
+            });
 
-                if (!response.ok) {
-                    throw new Error('Ошибка загрузки деталей голосования.');
-                }
-
-                const data = await response.json();
-                setVoting(data);
-            } catch (err) {
-                setError(err.message || 'Ошибка загрузки деталей голосования.');
+            if (!response.ok) {
+                throw new Error('Ошибка загрузки деталей голосования.');
             }
-        };
 
-        fetchVotingDetails();
-    }, [votingId]);
+            const data = await response.json();
+            setVoting(data);
+        } catch (err) {
+            const errorMessage = err.message || 'Ошибка загрузки деталей голосования.';
+            setError(errorMessage);
+        }
+    };
 
-    const handleAddVariant = async () => {
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        const token = localStorage.getItem('token');
+        try {
+            const response = await fetch(`http://localhost:8081/votings/${votingId}`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`,
+                },
+                body: JSON.stringify(voting),
+            });
+    
+            if (!response.ok) {
+                const errorMessage = await response.text(); // Получаем текст ошибки
+                throw new Error(`Ошибка при обновлении голосования: ${errorMessage}`);
+            }
+    
+            const updatedVoting = await response.json(); // Получаем обновленные данные голосования
+            console.log('Обновленное голосование:', updatedVoting); // Отладочная информация
+    
+            // Перенаправление на страницу голосования
+            navigate(`/votings/${votingId}`);
+        } catch (err) {
+            const errorMessage = err.message || 'Ошибка при обновлении голосования.';
+            setError(errorMessage);
+        }
+    };
+    const handleAddVariant = async (e) => {
+        e.preventDefault();
         const token = localStorage.getItem('token');
         try {
             const response = await fetch(`http://localhost:8083/votings/${votingId}/variants`, {
@@ -46,52 +72,18 @@ const EditVoting = () => {
             });
 
             if (!response.ok) {
-                throw new Error('Ошибка при добавлении варианта.');
+                throw new Error('Ошибка при добавлении варианта голосования.');
             }
 
-            const variant = await response.json();
-            setVoting(prev => ({
+            const addedVariant = await response.json();
+            setVoting((prev) => ({
                 ...prev,
-                variants: [...prev.variants, variant], // Добавляем новый вариант
+                variants: [...(prev.variants || []), addedVariant], // Убедитесь, что prev.variants - это массив
             }));
-            setNewVariant('');
+            setNewVariant(''); // Сброс поля ввода
         } catch (err) {
-            setError(err.message || 'Ошибка при добавлении варианта.');
-        }
-    };
-
-    const handleEditVariant = (variant) => {
-        setNewVariant(variant.description);
-        setEditingVariantId(variant.id);
-    };
-
-    const handleUpdateVariant = async () => {
-        const token = localStorage.getItem('token');
-        try {
-            const response = await fetch(`http://localhost:8083/votings/${votingId}/variants/${editingVariantId}`, {
-                method: 'PUT',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${token}`,
-                },
-                body: JSON.stringify({ description: newVariant }),
-            });
-
-            if (!response.ok) {
-                throw new Error('Ошибка при обновлении варианта.');
-            }
-
-            const updatedVariant = await response.json();
-            setVoting(prev => ({
-                ...prev,
-                variants: prev.variants.map(variant => 
-                    variant.id === updatedVariant.id ? updatedVariant : variant
-                ),
-            }));
-            setNewVariant('');
-            setEditingVariantId(null);
-        } catch (err) {
-            setError(err.message || 'Ошибка при обновлении варианта.');
+            const errorMessage = err.message || 'Ошибка при добавлении варианта голосования.';
+            setError(errorMessage);
         }
     };
 
@@ -106,95 +98,70 @@ const EditVoting = () => {
             });
 
             if (!response.ok) {
-                throw new Error('Ошибка при удалении варианта.');
+                throw new Error('Ошибка при удалении варианта голосования.');
             }
 
-            setVoting(prev => ({
+            // Обновляем список вариантов после удаления
+            setVoting((prev) => ({
                 ...prev,
                 variants: prev.variants.filter(variant => variant.id !== variantId),
             }));
         } catch (err) {
-            setError(err.message || 'Ошибка при удалении варианта.');
-        }
- };
-
-    const handleSaveVoting = async () => {
-        const token = localStorage.getItem('token');
-        try {
-            const response = await fetch(`http://localhost:8081/votings/${votingId}`, {
-                method: 'PUT',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${token}`,
-                },
-                body: JSON.stringify({
-                    name: voting.name,
-                    description: voting.description,
-                }),
-            });
-
-            if (!response.ok) {
-                throw new Error('Ошибка при сохранении изменений голосования.');
-            }
-
-            // Получаем обновленные данные голосования
-            const updatedVoting = await response.json();
-
-            // Обновляем состояние с новыми данными
-            setVoting(prev => ({
-                ...prev,
-                name: updatedVoting.name,
-                description: updatedVoting.description,
-                // Варианты не обновляем, так как они управляются отдельно
-            }));
-
-            alert('Изменения успешно сохранены!');
-        } catch (err) {
-            setError(err.message || 'Ошибка при сохранении изменений голосования.');
+            const errorMessage = err.message || 'Ошибка при удалении варианта голосования.';
+            setError(errorMessage);
         }
     };
+
+    useEffect(() => {
+        fetchVotingDetails();
+    }, []);
 
     return (
         <div className="edit-voting-container">
             {error && <div className="error-message">{error}</div>}
-            <h1>Редактировать голосование</h1>
-            <input
-                type="text"
-                value={voting.name}
-                onChange={(e) => setVoting({ ...voting, name: e.target.value })}
-                placeholder="Название голосования"
-            />
-            <textarea
-                value={voting.description}
-                onChange={(e) => setVoting({ ...voting, description: e.target.value })}
-                placeholder="Описание голосования"
-            />
-            <h2>Варианты голосования</h2>
+
+            <h2>Редактировать голосование</h2>
+            <form onSubmit={handleSubmit}>
+                <input
+                    type="text"
+                    value={voting.name}
+                    onChange={(e) => setVoting({ ...voting, name: e.target.value })}
+                    placeholder="Название голосования"
+                    required
+                />
+                <textarea
+                    value={voting.description}
+                    onChange={(e) => setVoting({ ...voting, description: e.target.value })}
+                    placeholder="Описание голосования"
+                    required
+                />
+                <button type="submit">Сохранить изменения</button>
+            </form>
+
+            <h3>Варианты голосования</h3>
+            <form onSubmit={handleAddVariant}>
+                <input
+                    type="text"
+                    value={newVariant}
+                    onChange={(e) => setNewVariant(e.target.value)}
+                    placeholder="Новый вариант"
+                    required
+                />
+                <button type="submit">Добавить вариант</button>
+            </form>
+
             <ul>
                 {Array.isArray(voting.variants) && voting.variants.length > 0 ? (
-                    voting.variants.map(variant => (
+                    voting.variants.map((variant) => (
                         <li key={variant.id}>
-                            <p>{variant.description}</p>
-                            <button onClick={() => handleEditVariant(variant)} className="btn btn-edit">Редактировать</button>
-                            <button onClick={() => handleDeleteVariant(variant.id)} className="btn btn-danger">Удалить</button>
+                            {variant.description}
+                            <button onClick={() => handleDeleteVariant(variant.id)}>Удалить</button>
                         </li>
                     ))
                 ) : (
-                    <p>Нет доступных вариантов голосования.</p>
+                    <li>Нет доступных вариантов</li>
                 )}
             </ul>
-            <input
-                type="text"
-                value={newVariant}
-                onChange={(e) => setNewVariant(e.target.value)}
-                placeholder="Добавить новый вариант"
-            />
-            {editingVariantId ? (
-                <button onClick={handleUpdateVariant} className="btn btn-primary">Обновить вариант</button>
-            ) : (
-                <button onClick={handleAddVariant} className="btn btn-primary">Добавить вариант</button>
-            )}
-            <button onClick={handleSaveVoting} className="btn btn-save">Сохранить изменения</button>
         </div>
     );
 };

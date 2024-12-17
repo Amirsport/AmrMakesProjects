@@ -11,6 +11,7 @@ import Login from './pages/Login';
 import Profile from './pages/Profile';
 import CreateVoting from './pages/CreateVoting';
 import './styles/Appstyles.scss'; // Подключаем стили
+import EditVoting from './pages/EditVoting';
 
 const App = () => {
     const [user, setUser ] = useState(null);
@@ -33,6 +34,7 @@ const App = () => {
                     <Route path="/" element={<Welcome />} /> {/* Страница приветствия */}
                     <Route path="/home" element={<Home />} />
                     <Route path="/voting/:votingId" element={<VotingDetails />} />
+                    <Route path="/edit-voting/:votingId" element={<EditVoting />} />
                     <Route path="/registration" element={<Registration />} />
                     <Route path="/login" element={<Login setUser ={setUser } />} />
                     <Route path="/profile" element={<Profile />} />

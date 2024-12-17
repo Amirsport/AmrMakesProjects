@@ -1,14 +1,17 @@
 // src/pages/VotingDetails.jsx
 import React, { useEffect, useState, useCallback } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, Link } from 'react-router-dom';
 import '../styles/VotingDetailsStyles.scss';
 
 const VotingDetails = () => {
     const { votingId } = useParams();
-    const [voting, setVoting] = useState({ variants: [] }); // Инициализация с пустым массивом
+    const [voting, setVoting] = useState({ variants: [] });
     const [error, setError] = useState('');
     const [comments, setComments] = useState([]);
     const [newComment, setNewComment] = useState('');
+    const [isAuthor, setIsAuthor] = useState(false);
+    const [voteCounts, setVoteCounts] = useState({});
+    const [userVote, setUserVote] = useState(null); // Track the user's current vote
 
     const fetchVotingDetails = useCallback(async () => {
         const token = localStorage.getItem('token');
@@ -18,14 +21,22 @@ const VotingDetails = () => {
                     'Authorization': `Bearer ${token}`,
                 },
             });
-
+    
             if (!response.ok) {
                 throw new Error('Ошибка загрузки деталей голосования.');
             }
-
+    
             const data = await response.json();
-            console.log('Fetched voting data:', data); // Лог для отладки
             setVoting(data);
+    
+            // Проверка, является ли текущий пользователь автором
+            const userId = JSON.parse(atob(token.split('.')[1])).id; // Извлечение userId из JWT
+            console.log('User   ID:', userId); // Log user ID
+            console.log('Author ID:', data.voting.author_id); // Log author ID
+    
+            if (data.voting.author_id === userId) {
+                setIsAuthor(true);
+            }
         } catch (err) {
             const errorMessage = err.message || 'Ошибка загрузки деталей голосования.';
             setError(errorMessage);
@@ -49,6 +60,36 @@ const VotingDetails = () => {
             setComments(data);
         } catch (err) {
             const errorMessage = err.message || 'Ошибка загрузки комментариев.';
+            setError(errorMessage);
+        }
+    }, [votingId]);
+
+    const fetchVotes = useCallback(async () => {
+        const token = localStorage.getItem('token');
+        try {
+            const response = await fetch(`http://localhost:8084/votings/${votingId}/votes`, {
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                },
+            });
+
+            if (!response.ok) {
+                throw new Error('Ошибка загрузки статистики голосов.');
+            }
+
+            const data = await response.json();
+            const counts = {};
+            data.forEach(vote => {
+                counts[vote.variant_id] = (counts[vote.variant_id] || 0) + 1;
+            });
+            setVoteCounts(counts);
+
+            // Track the user's current vote
+            const userId = JSON.parse(atob(token.split('.')[1])).id; // Извлечение userId из JWT
+            const userVote = data.find(vote => vote.author_id === userId);
+            setUserVote(userVote ? userVote.variant_id : null);
+        } catch (err) {
+            const errorMessage = err.message || 'Ошибка загрузки статистики голосов.';
             setError(errorMessage);
         }
     }, [votingId]);
@@ -99,10 +140,60 @@ const VotingDetails = () => {
         }
     };
 
+    const handleVote = async (variantId) => {
+        const token = localStorage.getItem('token');
+        try {
+            const response = await fetch(`http://localhost:8084/votings/${votingId}/votes`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`,
+                },
+                body: JSON.stringify({ variant_id: variantId }),
+            });
+
+            if (!response.ok) {
+                throw new Error('Ошибка при голосовании.');
+            }
+
+            // Обновляем статистику голосов после голосования
+            fetchVotes();
+            setUserVote(variantId); // Set the user's current vote
+        } catch (err) {
+            const errorMessage = err.message || 'Ошибка при голосовании.';
+            setError(errorMessage);
+        }
+    };
+
+    const handleRevokeVote = async () => {
+        const token = localStorage.getItem('token');
+        console.log('User  Vote ID:', userVote); // Log the userVote ID
+        try {
+            const response = await fetch(`http://localhost:8084/votings/${votingId}/votes/${userVote}`, {
+                method: 'DELETE',
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                },
+            });
+    
+            if (!response.ok) {
+                throw new Error('Ошибка при отзыве голоса.');
+            }
+    
+            // Clear the user's vote and update vote counts
+            setUserVote(null);
+            fetchVotes();
+        } catch (err) {
+            const errorMessage = err.message || 'Ошибка при отзыве голоса.';
+            setError(errorMessage);
+        }
+    };
+
     useEffect(() => {
         fetchVotingDetails();
         fetchComments();
-    }, [fetchVotingDetails, fetchComments]);
+        fetchVotes(); // Fetch votes when the component mounts
+    }, [fetchVotingDetails, fetchComments, fetchVotes]);
 
     return (
         <div className="voting-details-container">
@@ -111,41 +202,55 @@ const VotingDetails = () => {
                 <>
                     <h1>{voting.name}</h1>
                     <p>{voting.description}</p>
+                    {isAuthor && (
+    <Link to={`/edit-voting/${votingId}`} className="btn">Редактировать голосование</Link>
+)}  
                     <h2>Варианты голосования</h2>
-                    {voting.variants && voting.variants.length > 0 ? (
-                        <ul>
-                            {voting.variants.map(variant => (
-                                <li key={variant.id}>
-                                    <p>{variant.description}</p>
-                                </li>
-                            ))}
-                        </ul>
-                    ) : (
-                        <p>Нет доступных вариантов голосования.</p>
+                    <div>
+                        {Array.isArray(voting.variants) && voting.variants.length > 0 ? (
+                            voting.variants.map(variant => (
+                                <div key={variant.id}>
+                                    <button onClick={() => handleVote(variant.id)} className="btn btn-primary">
+                                        {variant.description}
+                                    </button>
+                                    <span> Голосов: {voteCounts[variant.id] || 0}</span> {/* Отображение количества голосов */}
+                                    {isAuthor && (
+                                        <Link to={`/edit-variant/${variant.id}`} className="btn btn-secondary">Редактировать</Link>
+                                    )}
+                                </div>
+                            ))
+                        ) : (
+                            <p>Нет доступных вариантов голосования.</p>
+                        )}
+                    </div>
+
+                    {userVote && (
+                        <div>
+                            <button onClick={handleRevokeVote} className="btn btn-danger">Отменить голос</button>
+                        </div>
                     )}
+
                     <h2>Комментарии</h2>
                     <form onSubmit={handleCommentSubmit}>
                         <textarea
                             value={newComment}
                             onChange={(e) => setNewComment(e.target.value)}
-                            placeholder="Напишите комментарий..."
+                            placeholder="Добавьте комментарий"
                             required
                         />
-                        <button type="submit" className=" submit-button">Добавить комментарий</button>
+                        <button type="submit">Отправить</button>
                     </form>
                     <ul>
-                        {comments.length > 0 ? (
-                            comments.map(comment => (
-                                <li key={comment.id}>
-                                    <p>{comment.description}</p>
+                        {comments.map(comment => (
+                            <li key={comment.id}>
+                                {comment.description}
+                                {isAuthor && (
                                     <button onClick={() => handleDeleteComment(comment.id)}>Удалить</button>
-                                </li>
-                            ))
-                        ) : (
-                            <p>Нет комментариев.</p>
-                        )}
+                                )}
+                            </li>
+                        ))}
                     </ul>
-                </>
+                    </>
             )}
         </div>
     );
