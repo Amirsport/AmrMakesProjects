@@ -21,7 +21,7 @@ const Header = ({ user, setUser  }) => {
                 {user ? (
                     <>
                         <Link to="/create-voting" className="btn">Создать голосование</Link>
-                        <Link to="/profile" className="btn">Профиль</Link>
+                        <Link to="/profile" className="btn">{user}</Link>
                         <button className="btn" onClick={handleLogout}>Выйти</button>
                     </>
                 ) : (
