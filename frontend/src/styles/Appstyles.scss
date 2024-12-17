@@ -59,36 +59,3 @@ h1, h2, h3, h4, h5, h6 {
     bottom: 0; // Прикрепляем футер к низу
     width: 100%; // Ширина 100%
 }
-
-// Стили для страницы приветствия
-.welcome-container {
-    display: flex; // Используем Flexbox для центрирования
-    flex-direction: column; // Вертикальное направление
-    align-items: center; // Центрируем по горизонтали
-    justify-content: flex-start; // Выровнять содержимое к верхней части
-    min-height: calc(100vh - 60px); // Минимальная высота на всю высоту окна минус высота футера
-    background-color: $primary-color; // Темный фон
-    color: $text-color; // Белый текст
-    text-align: center; // Центрируем текст
-    padding: 20px; // Отступы
-    padding-top: 60px; // Добавляем отступ сверху, чтобы не прилипать к верхней части
-    box-sizing: border-box; // Учитываем padding в высоте
-
-    h1 {
-        font-size: 2.5em; // Размер шрифта заголовка
-        margin-bottom: 20px; // Отступ снизу
-    }
-
-    img {
-        max-width: 200px; // Максимальная ширина логотипа
-        height: auto; // Автоматическая высота
-        margin-bottom: 20px; // Отступ снизу
-    }
-
-    p {
-        font-size: 1.2em; // Размер шрифта для текста
-        margin-bottom: 20px; // Отступ снизу
-    }
-}
-
-// Другие стили для страниц можно добавлять здесь
