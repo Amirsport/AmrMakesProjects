@@ -1,5 +1,6 @@
 // src/pages/CreateVoting.jsx
 import React, { useState } from 'react';
+import '../styles/CreateVotingStyles.scss'
 
 const CreateVoting = () => {
     const [name, setName] = useState('');

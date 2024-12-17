@@ -1,6 +1,7 @@
 package main
 
 import (
+	"log"
 	"net/http"
 	"strconv"
 	"time"
@@ -124,12 +125,14 @@ func getVariantIDs(variants []VoteVariant) []int {
 	return ids
 }
 
-// Функция для отзыва голоса
 func revokeVote(c echo.Context) error {
-	voteID, err := strconv.Atoi(c.Param("voteId")) // Измените на voteId
+	voteID, err := strconv.Atoi(c.Param("voteId"))
 	if err != nil {
 		return c.JSON(http.StatusBadRequest, "Неверный ID голоса")
 	}
+
+	// Log the vote ID being revoked
+	log.Printf("Attempting to revoke vote with ID: %d", voteID)
 
 	// Получаем ID пользователя из токена
 	token := c.Request().Header.Get("Authorization")
@@ -142,7 +145,7 @@ func revokeVote(c echo.Context) error {
 
 	claims := &JWTClaims{}
 	_, err = jwt.ParseWithClaims(token, claims, func(token *jwt.Token) (interface{}, error) {
-		return []byte("your_secret_key"), nil // Замените на ваш секретный ключ
+		return []byte("your_secret_key"), nil
 	})
 
 	if err != nil {

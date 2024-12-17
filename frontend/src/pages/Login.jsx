@@ -26,8 +26,8 @@ const Login = ({ setUser  }) => {
 
             if (!response.ok) {
                 if (response.status === 401) {
-                    // Если статус 401, перенаправляем на страницу приветствия
-                    navigate('/');
+                    // Если статус 401, показываем сообщение об ошибке
+                    setError('Неверное имя пользователя или пароль. Попробуйте еще раз.');
                     return;
                 }
                 throw new Error('Ошибка входа. Попробуйте еще раз.');
@@ -40,7 +40,7 @@ const Login = ({ setUser  }) => {
             setSuccess('Успешный вход! Перенаправление...');
             setTimeout(() => {
                 navigate('/home'); // Перенаправление на главную страницу
-            },  2000);
+            }, 2000);
         } catch (err) {
             const errorMessage = err.message || 'Ошибка входа. Попробуйте еще раз.';
             setError(errorMessage);

@@ -1,4 +1,3 @@
-// src/pages/VotingDetails.jsx
 import React, { useEffect, useState, useCallback } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import '../styles/VotingDetailsStyles.scss';
@@ -21,19 +20,16 @@ const VotingDetails = () => {
                     'Authorization': `Bearer ${token}`,
                 },
             });
-    
+
             if (!response.ok) {
                 throw new Error('Ошибка загрузки деталей голосования.');
             }
-    
+
             const data = await response.json();
             setVoting(data);
-    
+
             // Проверка, является ли текущий пользователь автором
             const userId = JSON.parse(atob(token.split('.')[1])).id; // Извлечение userId из JWT
-            console.log('User   ID:', userId); // Log user ID
-            console.log('Author ID:', data.voting.author_id); // Log author ID
-    
             if (data.voting.author_id === userId) {
                 setIsAuthor(true);
             }
@@ -167,7 +163,6 @@ const VotingDetails = () => {
 
     const handleRevokeVote = async () => {
         const token = localStorage.getItem('token');
-        console.log('User  Vote ID:', userVote); // Log the userVote ID
         try {
             const response = await fetch(`http://localhost:8084/votings/${votingId}/votes/${userVote}`, {
                 method: 'DELETE',
@@ -175,11 +170,11 @@ const VotingDetails = () => {
                     'Authorization': `Bearer ${token}`,
                 },
             });
-    
+
             if (!response.ok) {
                 throw new Error('Ошибка при отзыве голоса.');
             }
-    
+
             // Clear the user's vote and update vote counts
             setUserVote(null);
             fetchVotes();
@@ -203,33 +198,27 @@ const VotingDetails = () => {
                     <h1>{voting.name}</h1>
                     <p>{voting.description}</p>
                     {isAuthor && (
-    <Link to={`/edit-voting/${votingId}`} className="btn">Редактировать голосование</Link>
-)}  
+                        <Link to={`/edit-voting/${votingId}`} className="btn">Редактировать голосование</Link>
+                    )}
                     <h2>Варианты голосования</h2>
                     <div>
                         {Array.isArray(voting.variants) && voting.variants.length > 0 ? (
                             voting.variants.map(variant => (
                                 <div key={variant.id}>
-                                    <button onClick={() => handleVote(variant.id)} className="btn btn-primary">
+                                    <button 
+                                        onClick={() => handleVote(variant.id)} 
+                                        className="btn btn-primary" 
+                                        disabled={userVote !== null} // Disable if user has already voted
+                                    >
                                         {variant.description}
                                     </button>
-                                    <span> Голосов: {voteCounts[variant.id] || 0}</span> {/* Отображение количества голосов */}
-                                    {isAuthor && (
-                                        <Link to={`/edit-variant/${variant.id}`} className="btn btn-secondary">Редактировать</Link>
-                                    )}
+                                    <span> Голосов: {voteCounts[variant.id] || 0}</span>
                                 </div>
                             ))
                         ) : (
                             <p>Нет доступных вариантов голосования.</p>
                         )}
                     </div>
-
-                    {userVote && (
-                        <div>
-                            <button onClick={handleRevokeVote} className="btn btn-danger">Отменить голос</button>
-                        </div>
-                    )}
-
                     <h2>Комментарии</h2>
                     <form onSubmit={handleCommentSubmit}>
                         <textarea
@@ -250,7 +239,7 @@ const VotingDetails = () => {
                             </li>
                         ))}
                     </ul>
-                    </>
+                </>
             )}
         </div>
     );
