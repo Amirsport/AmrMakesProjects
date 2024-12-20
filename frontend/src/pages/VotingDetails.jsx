@@ -1,6 +1,9 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import '../styles/VotingDetailsStyles.scss';
+import logo from './bulbasaur.png';
+const images = require.context('./PokemonDataset', true);
+const imageList = images.keys().map(image => images(image));
 
 const VotingDetails = () => {
     const { votingId } = useParams();
@@ -218,6 +221,19 @@ const VotingDetails = () => {
                         ) : (
                             <p>Нет доступных вариантов голосования.</p>
                         )}
+                    </div>
+                    <p></p>
+                    var x = 'abra'
+                    <div>
+                        <h2>Команда</h2>
+                        <div class="grid-container">
+                        <div><img src={imageList[324]} width={100} height={100}/></div>
+  <div><img src={logo} width={100} height={100}/></div>
+  <div><img src={logo} width={100} height={100}/></div>  
+  <div><img src={logo} width={100} height={100}/></div>
+  <div><img src={logo} width={100} height={100}/></div>
+  <div><img src={logo} width={100} height={100}/></div>
+  </div>
                     </div>
                     <h2>Комментарии</h2>
                     <form onSubmit={handleCommentSubmit}>
