@@ -1,1 +1,1 @@
-# votings-golang
+# pokedex thx to Timur
