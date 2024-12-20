@@ -1,8 +1,8 @@
 {% extends 'base/voting_page.html' %}
 
 {% block links %}
-    <a class="btn btn-info mb-1" href="{% url 'voting_details' voting.id %}" role="button">Подробности</a>
-    <a class="btn btn-danger mb-1" href="{% url 'complaint_add' voting.id %}" role="button">Подать жалобу</a>
+    <a class="btn btn-info mb-1" href="{% url 'voting_details' votings.id %}" role="button">Подробности</a>
+    <a class="btn btn-danger mb-1" href="{% url 'complaint_add' votings.id %}" role="button">Подать жалобу</a>
 {% endblock %}
 {% block controls %}
     <div class="row">

@@ -25,16 +25,39 @@
     color: #ffffff; /* Белый текст */
 }
 
+.header .logo {
+    margin-left: 5px;
+    margin-top: 10px;
+    width: 50px;
+    height: auto;
+}
+
+.logo-text {
+    font-size: 24px; // Размер шрифта
+    font-family: 'Roboto', sans-serif; // Укажите красивый шрифт
+    color: #ffffff; // Цвет текста
+    margin-left: 20px;
+    margin-bottom: 10px; // Отступ от логотипа
+    display: inline-block; // Чтобы текст был на одной линии с логотипом
+    vertical-align: middle; // Центрирование по вертикали
+}
+
 .header .btn {
-    margin-left: 10px; /* Отступ между кнопками */
+    margin-left: 18px; /* Отступ между кнопками */
     background-color: #403d3d; /* Цвет кнопок */
     color: #ffffff; /* Белый текст */
     border: none;
-    border-radius: 5px;
+    border-radius: 6px;
     padding: 10px 15px;
     cursor: pointer;
     transition: background-color 0.3s;
 }
+
+/* Добавляем отступ справа от крайней кнопки */
+.header .user-info .btn:last-child {
+    margin-right: 35px; /* Отступ справа */
+}
+
 
 .header .btn:hover {
     background-color: #555; /* Цвет кнопки при наведении */

@@ -17,7 +17,7 @@ import (
 type VoteVariant struct {
 	ID          int    `json:"id" gorm:"primaryKey"`
 	Description string `json:"description"` // Поле для описания варианта
-	VotingID    int    `json:"voting_id"`   // ID голосования
+	VotingID    int    `json:"votings_id"`  // ID голосования
 }
 
 // Voting представляет голосование
@@ -38,7 +38,7 @@ var db *gorm.DB
 // Инициализация базы данных
 func initDB() {
 	var err error
-	dsn := "host=localhost user=postgres password=postgres dbname=votings port=5432 sslmode=disable"
+	dsn := "host=localhost user=postgres password=Amirka58906510 dbname=pokedex port=5432 sslmode=disable"
 	db, err = gorm.Open(postgres.Open(dsn), &gorm.Config{})
 	if err != nil {
 		panic("failed to connect to database")

@@ -39,7 +39,6 @@ const Home = () => {
                         </div>
                         <div className="voting-body">
                             <h5 className="voting-title">{voting.name}</h5>
-                            <p className="voting-description">{voting.description}</p>
                             <p className="voting-author"><small>Автор: {voting.author.username}</small></p>
                             <Link to={`/voting/${voting.id}`} className="btn">Подробности</Link> {/* Кнопка для перехода на страницу голосования */}
                         </div>

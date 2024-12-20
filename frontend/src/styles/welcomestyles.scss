@@ -3,34 +3,70 @@ $secondary-color: #403d3d; // Цвет кнопок
 $text-color: #ffffff; // Цвет текста
 $font-family: Arial, sans-serif; // Шрифт
 
+/* Контейнер страницы */
 .welcome-container {
-    display: flex;
-    flex-direction: column;
+    display: flex; // Делаем отображение элементов горизонтальным
     align-items: center;
-    justify-content: center;
-    /* Remove min-height */
+    justify-content: space-between; // Разделяем блоки по сторонам
     background-color: $primary-color;
     color: $text-color;
-    text-align: center;
-    padding: 20px;
-    padding-top: 40px;
+    padding: 30px;
     box-sizing: border-box;
+    min-height: 80vh;
+}
+
+/* Левый блок с текстом */
+/* Левый блок с текстом */
+.welcome-text {
+    display: flex;
+    flex-direction: column; // Текст и кнопка идут по вертикали
+    justify-content: center;
+    margin-left: 30px;
+    align-items: flex-start; // Выравниваем слева
+    max-width: 50%; // Ограничиваем ширину текста
 
     h1 {
-        font-size: 2.5em;
-        margin-bottom: 20px;
+        font-size: 4.2em;
+        margin-bottom: 20px; 
+        color: #ffffff;
+        // Увеличиваем отступ под заголовком
     }
+
+    h2 {
+        font-size: 2.2em; // Чуть увеличим размер текста
+        margin-bottom: 30px; // Увеличиваем отступ под текстом
+        line-height: 1.6;// Увеличиваем отступ под заголовком
+        color: #ffffff;
+    }    
+
+    .btn {
+        display: inline-block;
+        background-color: $secondary-color;
+        color: $text-color;
+        padding: 10px 22px; // Увеличиваем внутренние отступы (делает кнопку больше)
+        font-size: 1.8em;   // Увеличиваем размер текста внутри кнопки
+        text-decoration: none;
+        border-radius: 12px; // Более сглаженные углы
+        margin-top: 10px;    // Чуть увеличен отступ между кнопкой и текстом
+        transition: background-color 0.3s;
+    
+        &:hover {
+            background-color: lighten($secondary-color, 10%);
+        }
+    }
+}
+
+
+/* Правый блок с картинкой */
+.welcome-image {
+    display: flex;
+    justify-content: center;
+    align-items: center;
 
     img {
-        max-width: 200px;
+        max-width: 100%;
+        width: 690px;
+        margin-right: 20px; // Ограничиваем ширину изображения
         height: auto;
-        margin-bottom: 20px;
-        /* Allow image to take up remaining space */
-        flex: 1;
-    }
-
-    p {
-        font-size: 1.2em;
-        margin-bottom: 20px;
     }
 }

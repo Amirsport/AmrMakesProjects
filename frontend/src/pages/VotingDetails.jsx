@@ -5,12 +5,14 @@ import logo from './bulbasaur.png';
 const images = require.context('./PokemonDataset', true);
 const imageList = images.keys().map(image => images(image));
 
+
 const VotingDetails = () => {
     const { votingId } = useParams();
     const [voting, setVoting] = useState({ variants: [] });
     const [error, setError] = useState('');
     const [comments, setComments] = useState([]);
     const [newComment, setNewComment] = useState('');
+    const [pokes, setPokes] = useState({pokemons : []});
     const [isAuthor, setIsAuthor] = useState(false);
     const [voteCounts, setVoteCounts] = useState({});
     const [userVote, setUserVote] = useState(null); // Track the user's current vote
@@ -30,18 +32,21 @@ const VotingDetails = () => {
 
             const data = await response.json();
             setVoting(data);
-
+            
             // Проверка, является ли текущий пользователь автором
             const userId = JSON.parse(atob(token.split('.')[1])).id; // Извлечение userId из JWT
             if (data.voting.author_id === userId) {
                 setIsAuthor(true);
             }
+
+            setPokes(data.voting.description.split(" "));
+
         } catch (err) {
             const errorMessage = err.message || 'Ошибка загрузки деталей голосования.';
             setError(errorMessage);
         }
-    }, [votingId]);
-
+    }, [votingId])
+    console.log(pokes)
     const fetchComments = useCallback(async () => {
         const token = localStorage.getItem('token');
         try {
@@ -193,6 +198,8 @@ const VotingDetails = () => {
         fetchVotes(); // Fetch votes when the component mounts
     }, [fetchVotingDetails, fetchComments, fetchVotes]);
 
+    
+
     return (
         <div className="voting-details-container">
             {error && <div className="error-message">{error}</div>}
@@ -204,6 +211,18 @@ const VotingDetails = () => {
                         <Link to={`/edit-voting/${votingId}`} className="btn">Редактировать голосование</Link>
                     )}
                     <h2>Варианты голосования</h2>
+                    <div>
+                    
+                    <h2>Команда</h2>
+                    <div class="grid-container">
+                    <div><img src={imageList[pokes[0]]} width={100} height={100}/></div>
+<div><img src={imageList[pokes[1]]} width={100} height={100}/></div>
+<div><img src={imageList[pokes[2]]} width={100} height={100}/></div>  
+<div><img src={imageList[pokes[3]]} width={100} height={100}/></div>
+<div><img src={imageList[pokes[4]]} width={100} height={100}/></div>
+<div><img src={imageList[pokes[5]]} width={100} height={100}/></div>
+</div> 
+                   </div>
                     <div>
                         {Array.isArray(voting.variants) && voting.variants.length > 0 ? (
                             voting.variants.map(variant => (
@@ -221,19 +240,6 @@ const VotingDetails = () => {
                         ) : (
                             <p>Нет доступных вариантов голосования.</p>
                         )}
-                    </div>
-                    <p></p>
-                    var x = 'abra'
-                    <div>
-                        <h2>Команда</h2>
-                        <div class="grid-container">
-                        <div><img src={imageList[324]} width={100} height={100}/></div>
-  <div><img src={logo} width={100} height={100}/></div>
-  <div><img src={logo} width={100} height={100}/></div>  
-  <div><img src={logo} width={100} height={100}/></div>
-  <div><img src={logo} width={100} height={100}/></div>
-  <div><img src={logo} width={100} height={100}/></div>
-  </div>
                     </div>
                     <h2>Комментарии</h2>
                     <form onSubmit={handleCommentSubmit}>

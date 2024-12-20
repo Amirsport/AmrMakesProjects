@@ -54,7 +54,7 @@ const EditVoting = () => {
             console.log('Обновленное голосование:', updatedVoting); // Debug info
 
             // Redirect to voting details page
-            navigate(`/votings/${votingId}`);
+            navigate(`/home`);
         } catch (err) {
             const errorMessage = err.message || 'Ошибка при обновлении голосования.';
             setError(errorMessage);

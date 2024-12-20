@@ -8,16 +8,16 @@
             <p class="card-text">{{ voting.description }}</p>
             <div class="row">
                 <div class="col mt-3">
-                    <a href="{% url 'voting_vote' voting.id %}" class="btn btn-primary h-100">Проголосовать</a>
+                    <a href="{% url 'voting_vote' votings.id %}" class="btn btn-primary h-100">Проголосовать</a>
                 </div>
                 <div class="col mt-3">
-                    <a href="{% url 'voting_details' voting.id %}" class="btn btn-primary h-100">Подробности</a>
+                    <a href="{% url 'voting_details' votings.id %}" class="btn btn-primary h-100">Подробности</a>
                 </div>
                 {% if request.user.is_authenticated %}
                     <form method="post">
                         {% csrf_token %}
                         <div class="col mt-3">
-                            <input type="submit" class="btn btn-primary h-100" name="fav-{{ voting.id}}" value="Добавить в избранное"/>
+                            <input type="submit" class="btn btn-primary h-100" name="fav-{{ votings.id}}" value="Добавить в избранное"/>
                         </div>
                     </form>
                 {% endif %}

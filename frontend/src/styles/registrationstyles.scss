@@ -1,74 +1,76 @@
-/* styles.css */
-
-/* Стили для контейнера регистрации */
 .registration-container {
-    max-width: 400px; /* Максимальная ширина формы */
-    margin: 50px auto; /* Центрируем по горизонтали и добавляем отступ сверху */
-    padding: 20px; /* Внутренние отступы */
-    background-color: #1e1e1e; /* Темный фон для формы */
-    border: 1px solid #403d3d; /* Цвет рамки */
-    border-radius: 8px; /* Закругленные углы */
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Тень для эффекта поднятия */
+    max-width: 400px; 
+    margin: 50px auto; 
+    padding: 20px; 
+    background-color: #1e1e1e; 
+    border: 1px solid #403d3d; 
+    border-radius: 8px; 
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); 
 }
 
-/* Стили для заголовка */
-.registration-container h1 {
-    text-align: center; /* Центрируем заголовок */
-    color: #ffffff; /* Белый цвет заголовка */
+h1 {
+    text-align: center; 
+    color: #ffffff;
+    margin-bottom: 15px; /* Отступ под заголовком */
 }
 
-/* Стили для меток и полей ввода */
+form {
+    display: flex;
+    flex-direction: column; /* Располагаем элементы по вертикали */
+}
+
 label {
-    display: block; /* Блоковое отображение для меток */
-    margin-bottom: 10px; /* Отступ снизу */
-    color: #ffffff; /* Белый цвет текста */
+    display: block;
+    margin-bottom: 20px; 
+    color: #ffffff; 
 }
 
-/* Общие стили для полей ввода и селектов */
 input[type="text"],
 input[type="password"],
 input[type="email"],
 input[type="date"],
 select {
-    width: 100%; /* Ширина 100% */
-    padding: 10px; /* Внутренние отступы */
-    margin-bottom: 15px; /* Отступ снизу */
-    border: 1px solid #403d3d; /* Цвет рамки */
-    border-radius: 5px; /* Закругленные углы */
-    background-color: #2a2a2a; /* Темный фон для полей ввода */
-    color: #ffffff; /* Белый текст */
-    box-sizing: border-box; /* Учитываем padding в ширине */
+    width: 100%; 
+    padding: 10px; 
+    margin-top: 10px; /* Отступ между меткой и полем ввода */
+    margin-bottom: 15px; 
+    border: 1px solid #403d3d; 
+    border-radius: 5px; 
+    background-color: #2a2a2a; 
+    color: #ffffff; 
+    box-sizing: border-box; 
 }
 
 input:focus,
 select:focus {
-    outline: none; /* Убираем стандартный outline */
-    border-color: #1e90ff; /* Цвет рамки при фокусе */
+    outline: none; 
+    border-color: #1e90ff; 
 }
 
-/* Стили для кнопки */
 button {
-    width: 100%; /* Ширина 100% */
-    padding: 10px; /* Внутренние отступы */
-    background-color: #403d3d; /* Цвет кнопки */
-    color: #ffffff; /* Белый текст */
-    border: none; /* Убираем рамку */
-    border-radius: 5px; /* Закругленные углы */
-    cursor: pointer; /* Курсор в виде указателя */
-    transition: background-color 0.3s; /* Плавный переход цвета */
+    width: 100%; 
+    padding: 10px; 
+    margin-top: 10px; /* Отступ сверху для кнопки */
+    background-color: #403d3d; 
+    color: #ffffff; 
+    border: none; 
+    border-radius: 6px; 
+    cursor: pointer; 
+    transition: background-color 0.3s;
 }
 
 button:hover {
-    background-color: #555; /* Цвет кнопки при наведении */
+    background-color: #555; 
 }
 
-/* Стили для сообщений об ошибках и успехе */
 .error-message {
-    color: #ff4d4d; /* Красный цвет для ошибок */
-    margin: 10px 0; /* Отступы */
+    color: #ff4d4d; 
+    margin: 10px 0; 
+    text-align: center; /* Выравнивание по центру */
 }
 
 .success-message {
-    color: #4caf50; /* Зеленый цвет для успешных сообщений */
-    margin: 10px 0; /* Отступы */
+    color: #4caf50; 
+    margin: 10px 0; 
+    text-align: center; /* Выравнивание по центру */
 }
