@@ -160,7 +160,7 @@ const EditVoting = () => {
         <div className="edit-voting-container">
             {error && <div className="error-message">{error}</div>}
 
-            <h2>Редактировать голосование</h2>
+            <h2>Редактировать команду</h2>
             <form onSubmit={handleSubmit}>
                 <input
                     type="text"
@@ -172,13 +172,13 @@ const EditVoting = () => {
                 <textarea
                     value={voting.description} // Current voting description
                     onChange={(e) => setVoting({ ...voting, description: e.target.value })}
-                    placeholder="Описание голосования"
+                    placeholder="Описание команды"
                     required
                 />
                 <button type="submit">Сохранить изменения</button>
             </form>
 
-            <h3>Варианты голосования</h3>
+            {/* <h3>Варианты голосования</h3>
             <form onSubmit={handleAddVariant}>
                 <input
                     type="text"
@@ -217,7 +217,7 @@ const EditVoting = () => {
                 ) : (
                     <li>Нет доступных вариантов</li>
                 )}
-            </ul>
+            </ul> */}
         </div>
     );
 };

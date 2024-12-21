@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import '../styles/VotingDetailsStyles.scss';
-import logo from './bulbasaur.png';
+import heart from './heart.png';
 const images = require.context('./PokemonDataset', true);
 const imageList = images.keys().map(image => images(image));
 
@@ -208,39 +208,25 @@ const VotingDetails = () => {
                     <h1>{voting.name}</h1>
                     <p>{voting.description}</p>
                     {isAuthor && (
-                        <Link to={`/edit-voting/${votingId}`} className="btn">Редактировать голосование</Link>
+                        <Link to={`/edit-voting/${votingId}`} className="btn">Редактировать команду</Link>
                     )}
-                    <h2>Варианты голосования</h2>
                     <div>
                     
                     <h2>Команда</h2>
                     <div class="grid-container">
-                    <div><img src={imageList[pokes[0]]} width={100} height={100}/></div>
-<div><img src={imageList[pokes[1]]} width={100} height={100}/></div>
-<div><img src={imageList[pokes[2]]} width={100} height={100}/></div>  
-<div><img src={imageList[pokes[3]]} width={100} height={100}/></div>
-<div><img src={imageList[pokes[4]]} width={100} height={100}/></div>
-<div><img src={imageList[pokes[5]]} width={100} height={100}/></div>
+                    <div><img src={imageList[parseInt([pokes[0]]) -1 ]} width={100} height={100}/></div>
+<div><img src={imageList[parseInt([pokes[1]]) -1 ]} width={100} height={100}/></div>
+<div><img src={imageList[parseInt([pokes[2]]) -1 ]} width={100} height={100}/></div>  
+<div><img src={imageList[parseInt([pokes[3]]) -1 ]} width={100} height={100}/></div>
+<div><img src={imageList[parseInt([pokes[4]]) -1 ]} width={100} height={100}/></div>
+<div><img src={imageList[parseInt([pokes[5]]) -1 ]} width={100} height={100}/></div>
 </div> 
                    </div>
-                    <div>
-                        {Array.isArray(voting.variants) && voting.variants.length > 0 ? (
-                            voting.variants.map(variant => (
-                                <div key={variant.id}>
-                                    <button 
-                                        onClick={() => handleVote(variant.id)} 
-                                        className="btn btn-primary" 
-                                        disabled={userVote !== null} // Disable if user has already voted
-                                    >
-                                        {variant.description}
-                                    </button>
-                                    <span> Голосов: {voteCounts[variant.id] || 0}</span>
-                                </div>
-                            ))
-                        ) : (
-                            <p>Нет доступных вариантов голосования.</p>
-                        )}
-                    </div>
+                   <div class="grid-container">
+  <div><img src={heart} height={30} width={30}/><p>123</p></div>
+  <div>2</div>
+  <div>3</div>  
+</div>
                     <h2>Комментарии</h2>
                     <form onSubmit={handleCommentSubmit}>
                         <textarea

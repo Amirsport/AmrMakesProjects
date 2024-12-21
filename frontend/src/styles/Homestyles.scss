@@ -11,6 +11,7 @@
 }
 
 .voting-card {
+    margin-top: 15px;
     display: flex; // Используем Flexbox
     flex-direction: column; // Вертикальное выравнивание
     justify-content: space-between; // Распределяем пространство между элементами
@@ -23,21 +24,28 @@
 
 .voting-image img {
     width: 100%; // Ширина изображения 100%
+    max-height: 200px;
     border-radius: 5px; // Закругленные углы для изображения
 }
 
 .voting-title {
     color: #ffffff; // Цвет заголовка
+    margin-top: 15px;
 }
 
 .voting-description {
-    color: #cccccc; // Цвет описания
+    color: #cccccc; 
+}
+h5 {
+    font-size: 2.2em; 
+    // Увеличиваем отступ под заголовком
 }
 
 .voting-type, .voting-author {
-    color: #aaaaaa; // Цвет для типа голосования и автора
+    color: #aaaaaa;
+    margin-bottom: 20px; // Цвет для типа голосования и автора
 }
 
 .btn {
-    margin-top: auto; // Отодвигаем кнопку вниз
+    margin-top: auto;
 }

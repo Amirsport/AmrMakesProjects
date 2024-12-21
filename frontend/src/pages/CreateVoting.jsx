@@ -52,7 +52,7 @@ const CreateVoting = () => {
 
     return (
         <div>
-            <h2>Создать голосование</h2>
+            <h2>Создать команду</h2>
             {error && <div className="error-message">{error}</div>}
             {success && <div className="success-message">{success}</div>}
             <form onSubmit={handleSubmit}>
@@ -72,14 +72,6 @@ const CreateVoting = () => {
                         onChange={(e) => setDescription(e.target.value)}
                         required
                     />
-                </div>
-                <div>
-                    <label>Тип голосования:</label>
-                    <select value={votingType} onChange={(e) => setVotingType(Number(e.target.value))}>
-                        <option value={1}>Дискретное</option>
-                        <option value={2}>Выбор одного варианта</option>
-                        <option value={3}>Выбор пары вариантов</option>
-                    </select>
                 </div>
                 <div>
                     <label>Изображение:</label>

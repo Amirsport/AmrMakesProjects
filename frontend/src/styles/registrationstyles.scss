@@ -8,11 +8,7 @@
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); 
 }
 
-h1 {
-    text-align: center; 
-    color: #ffffff;
-    margin-bottom: 15px; /* Отступ под заголовком */
-}
+
 
 form {
     display: flex;
@@ -44,14 +40,16 @@ select {
 input:focus,
 select:focus {
     outline: none; 
-    border-color: #1e90ff; 
+    border-color: #8c8464; 
 }
+
+
 
 button {
     width: 100%; 
     padding: 10px; 
     margin-top: 10px; /* Отступ сверху для кнопки */
-    background-color: #403d3d; 
+    background-color: #8c8464; 
     color: #ffffff; 
     border: none; 
     border-radius: 6px; 

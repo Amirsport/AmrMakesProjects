@@ -27,7 +27,7 @@ const Home = () => {
 
     return (
         <div className="home-container">
-            <h1>Все голосования</h1>
+            <h1>Все команды</h1>
             {error && <div className="error-message">{error}</div>}
             <div className="voting-list">
                 {votings.map(voting => (

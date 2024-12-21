@@ -35,7 +35,7 @@
 .logo-text {
     font-size: 24px; // Размер шрифта
     font-family: 'Roboto', sans-serif; // Укажите красивый шрифт
-    color: #ffffff; // Цвет текста
+    color: #8c8464; // Цвет текста
     margin-left: 20px;
     margin-bottom: 10px; // Отступ от логотипа
     display: inline-block; // Чтобы текст был на одной линии с логотипом
@@ -44,14 +44,16 @@
 
 .header .btn {
     margin-left: 18px; /* Отступ между кнопками */
-    background-color: #403d3d; /* Цвет кнопок */
+    background-color: #8c8464; /* Цвет кнопок */
     color: #ffffff; /* Белый текст */
     border: none;
     border-radius: 6px;
     padding: 10px 15px;
     cursor: pointer;
+    white-space: nowrap; /* Запрещаем перенос текста */
     transition: background-color 0.3s;
 }
+
 
 /* Добавляем отступ справа от крайней кнопки */
 .header .user-info .btn:last-child {
